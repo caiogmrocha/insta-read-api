@@ -17,7 +17,7 @@ export class CreateReaderAccountService {
   public async execute(params: CreateReaderAccountServiceParams): Promise<void> {
     const reader = await this.readerRepository.getByEmail(params.email);
 
-    if (!reader) {
+    if (reader) {
       throw new ReaderEmailAlreadyExistsException(params.email);
     }
   }
