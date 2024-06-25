@@ -1,9 +1,9 @@
-export type EntityProps = {
+export type EntityProps = Partial<{
   createdAt: Date;
-  updatedAt: Date;
+  updatedAt?: Date;
   deletedAt?: Date;
   deleted: boolean;
-};
+}>;
 
 export abstract class Entity<T extends EntityProps> {
   constructor(props: T) {

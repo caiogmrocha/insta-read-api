@@ -5,7 +5,7 @@ export type UserProps = Partial<{
   name: string;
   email: string;
   password: string;
-}> & EntityProps;
+}> & Partial<EntityProps>;
 
 export class User extends Entity<UserProps> implements UserProps {
   public id: number;
@@ -16,4 +16,11 @@ export class User extends Entity<UserProps> implements UserProps {
   public updatedAt: Date;
   public deletedAt?: Date;
   public deleted: boolean;
+
+  constructor(props: UserProps) {
+    props.createdAt = props.createdAt ?? new Date();
+    props.deleted = props.deleted ?? false;
+
+    super(props);
+  }
 }
