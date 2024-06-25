@@ -1,4 +1,4 @@
-import { Entity, EntityProps } from "./Entity";
+import { Entity, EntityProps } from "./entity";
 
 export type UserProps = Partial<{
   id: number
