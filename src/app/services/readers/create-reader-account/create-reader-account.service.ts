@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { Reader } from '@/domain/entities/reader';
-import { ReaderRepository } from '@/app/interfaces/repositories/reader.repository';
+import { ReadersRepository } from '@/app/interfaces/repositories/reader.repository';
 import { BcryptProvider } from '@/app/interfaces/hash/bcrypt.provider';
 import { ReaderEmailAlreadyExistsException } from '@/app/services/readers/errors/reader-email-already-exists.error';
 
@@ -16,7 +16,7 @@ type CreateReaderAccountServiceParams = {
 @Injectable()
 export class CreateReaderAccountService {
   constructor (
-    @Inject(ReaderRepository) private readonly readerRepository: ReaderRepository,
+    @Inject(ReadersRepository) private readonly readerRepository: ReadersRepository,
     @Inject(BcryptProvider) private readonly bcryptProvider: BcryptProvider
   ) {}
 

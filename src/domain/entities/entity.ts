@@ -7,16 +7,7 @@ export type EntityProps = Partial<{
 
 export abstract class Entity<T extends EntityProps> {
   constructor(props: T) {
-    Object.entries(props).forEach(([key, value]) => {
-      Object.defineProperty(this, key, {
-        get() {
-          return this.props[key];
-        },
-        set(value) {
-          this.props[key] = value;
-        },
-      });
-    });
+    Object.assign(this, props);
   }
 
   public equals(object?: Entity<T>): boolean {

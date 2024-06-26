@@ -3,13 +3,13 @@ import { faker } from '@faker-js/faker';
 
 import { CreateReaderAccountService } from './create-reader-account.service';
 import { ReaderEmailAlreadyExistsException } from '../errors/reader-email-already-exists.error';
-import { ReaderRepository } from '../../../interfaces/repositories/reader.repository';
+import { ReadersRepository } from '../../../interfaces/repositories/reader.repository';
 import { BcryptProvider } from '../../../interfaces/hash/bcrypt.provider';
 import { Reader } from '../../../../domain/entities/reader';
 
 describe('CreateReaderAccountService', () => {
   let service: CreateReaderAccountService;
-  let readerRepository: jest.Mocked<ReaderRepository>;
+  let readerRepository: jest.Mocked<ReadersRepository>;
   let bcryptProvider: jest.Mocked<BcryptProvider>;
 
   beforeEach(async () => {
@@ -23,7 +23,7 @@ describe('CreateReaderAccountService', () => {
           })),
         },
         {
-          provide: ReaderRepository,
+          provide: ReadersRepository,
           useClass: jest.fn().mockImplementation(() => ({
             getByEmail: jest.fn(),
             create: jest.fn(),
@@ -34,7 +34,7 @@ describe('CreateReaderAccountService', () => {
     }).compile();
 
     service = module.get<CreateReaderAccountService>(CreateReaderAccountService);
-    readerRepository = module.get<jest.Mocked<ReaderRepository>>(ReaderRepository);
+    readerRepository = module.get<jest.Mocked<ReadersRepository>>(ReadersRepository);
     bcryptProvider = module.get<jest.Mocked<BcryptProvider>>(BcryptProvider);
   });
 

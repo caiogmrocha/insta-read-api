@@ -1,8 +1,8 @@
 import { Reader } from "src/domain/entities/reader";
 
-export interface ReaderRepository {
-  getByEmail(email: string): Promise<any>;
+export interface ReadersRepository {
+  getByEmail(email: string): Promise<Reader | null>;
   create(params: Reader): Promise<void>;
 }
 
-export const ReaderRepository = Symbol('ReaderRepository');
+export const ReadersRepository = Symbol('ReadersRepository');

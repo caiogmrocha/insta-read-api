@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
-import { CreateReaderAccountService } from '../app/services/readers/create-reader-account/create-reader-account.service';
-import { CreateReaderAccountController } from '../presentation/http/controllers/readers/create-reader-account/create-reader-account.controller';
-import { ReaderModule } from './reader.module';
+import { ReadersModule } from './readers.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [ReaderModule],
+  imports: [
+    ConfigModule.forRoot(),
+    ReadersModule,
+  ],
   controllers: [],
   providers: [],
 })
