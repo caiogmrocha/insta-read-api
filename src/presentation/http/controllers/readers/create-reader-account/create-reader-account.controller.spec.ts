@@ -5,7 +5,7 @@ import { BcryptProvider } from '@/app/interfaces/hash/bcrypt.provider';
 import { ReaderRepository } from '@/app/interfaces/repositories/reader.repository';
 import { CreateReaderAccountService } from '@/app/services/readers/create-reader-account/create-reader-account.service';
 import { faker } from '@faker-js/faker';
-import { ConflictException, InternalServerErrorException } from '@nestjs/common';
+import { ConflictException, InternalServerErrorException, UnprocessableEntityException } from '@nestjs/common';
 
 describe('CreateReaderAccountController', () => {
   let controller: CreateReaderAccountController;
