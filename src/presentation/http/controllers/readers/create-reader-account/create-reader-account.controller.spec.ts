@@ -4,9 +4,12 @@ import { CreateReaderAccountController } from './create-reader-account.controlle
 import { BcryptProvider } from '@/app/interfaces/hash/bcrypt.provider';
 import { ReaderRepository } from '@/app/interfaces/repositories/reader.repository';
 import { CreateReaderAccountService } from '@/app/services/readers/create-reader-account/create-reader-account.service';
+import { faker } from '@faker-js/faker';
+import { ConflictException } from '@nestjs/common';
 
 describe('CreateReaderAccountController', () => {
   let controller: CreateReaderAccountController;
+  let readerRepository: jest.Mocked<ReaderRepository>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -31,14 +34,15 @@ describe('CreateReaderAccountController', () => {
     }).compile();
 
     controller = module.get<CreateReaderAccountController>(CreateReaderAccountController);
+    readerRepository = module.get<jest.Mocked<ReaderRepository>>(ReaderRepository);
   });
 
   it('should response with 201 status code when reader account is created', async () => {
     // Arrange
     const requestDto = {
-      name: 'John Doe',
-      email: 'email@email.com',
-      password: 'password',
+      name: faker.person.fullName(),
+      email: faker.internet.email(),
+      password: faker.internet.password({ length: 12 }),
     };
 
     // Act
@@ -47,6 +51,23 @@ describe('CreateReaderAccountController', () => {
     // Assert
     expect(response).toBeUndefined();
   });
-  it.todo('should response with 409 status code when reader email already exists');
+
+  it('should response with 409 status code when reader email already exists', async () => {
+    // Arrange
+    const requestDto = {
+      name: faker.person.fullName(),
+      email: faker.internet.email(),
+      password: faker.internet.password({ length: 12 }),
+    };
+
+    readerRepository.getByEmail.mockResolvedValue({});
+
+    // Act
+    const response = controller.handle(requestDto);
+
+    // Assert
+    await expect(response).rejects.toThrow(ConflictException);
+  });
+
   it.todo('should response with 500 status code when an unexpected error occurs');
 });
