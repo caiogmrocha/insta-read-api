@@ -1,8 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Reader } from '../../../../domain/entities/reader';
-import { ReaderRepository } from '../../../interfaces/repositories/reader.repository';
-import { BcryptProvider } from '../../../interfaces/hash/bcrypt.provider';
-import { ReaderEmailAlreadyExistsException } from '../errors/reader-email-already-exists.error';
+
+import { Reader } from '@/domain/entities/reader';
+import { ReaderRepository } from '@/app/interfaces/repositories/reader.repository';
+import { BcryptProvider } from '@/app/interfaces/hash/bcrypt.provider';
+import { ReaderEmailAlreadyExistsException } from '@/app/services/readers/errors/reader-email-already-exists.error';
 
 const PASSWORD_HASH_SALT_ROUNDS = 10;
 
@@ -25,8 +26,6 @@ export class CreateReaderAccountService {
     if (reader) {
       throw new ReaderEmailAlreadyExistsException(params.email);
     }
-
-    console.log('Creating reader account...');
 
     const passwordHash = await this.bcryptProvider.hash(params.password, PASSWORD_HASH_SALT_ROUNDS);
 
