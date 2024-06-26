@@ -5,7 +5,7 @@ import { BcryptProvider } from '@/app/interfaces/hash/bcrypt.provider';
 import { ReaderRepository } from '@/app/interfaces/repositories/reader.repository';
 import { CreateReaderAccountService } from '@/app/services/readers/create-reader-account/create-reader-account.service';
 import { faker } from '@faker-js/faker';
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, InternalServerErrorException } from '@nestjs/common';
 
 describe('CreateReaderAccountController', () => {
   let controller: CreateReaderAccountController;
@@ -69,5 +69,20 @@ describe('CreateReaderAccountController', () => {
     await expect(response).rejects.toThrow(ConflictException);
   });
 
-  it.todo('should response with 500 status code when an unexpected error occurs');
+  it('should response with 500 status code when an unexpected error occurs', async () => {
+    // Arrange
+    const requestDto = {
+      name: faker.person.fullName(),
+      email: faker.internet.email(),
+      password: faker.internet.password({ length: 12 }),
+    };
+
+    readerRepository.getByEmail.mockRejectedValue(new Error('Unexpected error'));
+
+    // Act
+    const response = controller.handle(requestDto);
+
+    // Assert
+    await expect(response).rejects.toThrow(InternalServerErrorException);
+  });
 });
