@@ -1,8 +1,8 @@
 import { ReadersRepository } from '@/app/interfaces/repositories/reader.repository';
 import { Inject, Injectable } from '@nestjs/common';
-import { ReaderNotFoundException } from '../errors/reader-not-found-exception.error';
+import { ReaderNotFoundException } from '../errors/reader-not-found.exception';
 import { BcryptProvider } from '@/app/interfaces/hash/bcrypt.provider';
-import { InvalidReaderPasswordException } from '../errors/invalid-reader-password-exception.error';
+import { InvalidReaderPasswordException } from '../errors/invalid-reader-password.exception';
 import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
 
 export type AuthenticateReaderServiceParams = {
@@ -35,7 +35,9 @@ export class AuthenticateReaderService {
       throw new InvalidReaderPasswordException(params.email);
     }
 
-    const token = await this.jwtProvider.sign({ id: reader.id }, process.env.JWT_SECRET);
+    const { ...payload } = reader;
+
+    const token = await this.jwtProvider.sign(payload, process.env.JWT_SECRET);
 
     return { token };
   }

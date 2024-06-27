@@ -1,8 +1,11 @@
-import { Body, ConflictException, Controller, InternalServerErrorException, Post } from '@nestjs/common';
+import { Body, ConflictException, Controller, Get, InternalServerErrorException, Post, UseGuards } from '@nestjs/common';
 
 import { CreateReaderAccountDto } from './create-reader-account.dto';
 import { CreateReaderAccountService } from '@/app/services/readers/create-reader-account/create-reader-account.service';
-import { ReaderEmailAlreadyExistsException } from '@/app/services/readers/errors/reader-email-already-exists.error';
+import { ReaderEmailAlreadyExistsException } from '@/app/services/readers/errors/reader-email-already-exists.exception';
+import { AuthJwtGuard } from '@/infra/guards/auth-jwt.guard';
+import { AuthReaderGuard } from '@/infra/guards/auth-reader.guard';
+import { AuthAdminGuard } from '@/infra/guards/auth-admin.guard';
 
 @Controller()
 export class CreateReaderAccountController {

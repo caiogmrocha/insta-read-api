@@ -3,6 +3,9 @@ import { Injectable, CanActivate, Inject, ExecutionContext, UnauthorizedExceptio
 import { Request } from "express";
 
 import { JwtProvider } from "@/app/interfaces/auth/jwt/jwt.provider";
+import { Admin } from "@/domain/entities/admin";
+import { Reader } from "@/domain/entities/reader";
+import { UserProps } from "@/domain/entities/user";
 
 @Injectable()
 export class AuthJwtGuard implements CanActivate {
@@ -19,7 +22,7 @@ export class AuthJwtGuard implements CanActivate {
       throw new UnauthorizedException("Invalid token");
     }
 
-    let payload: unknown;
+    let payload: UserProps;
 
     try {
       payload = await this.jwtProvider.verify(token, process.env.JWT_SECRET);
@@ -27,7 +30,11 @@ export class AuthJwtGuard implements CanActivate {
       throw new UnauthorizedException("Invalid token");
     }
 
-    Object.assign(request, { user: payload });
+    if (payload.type === "admin") {
+      Object.assign(request, { user: new Admin(payload) });
+    } else {
+      Object.assign(request, { user: new Reader(payload) });
+    }
 
     return true;
   }

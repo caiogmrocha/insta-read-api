@@ -5,6 +5,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthJwtGuard } from '@/infra/guards/auth-jwt.guard';
 import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
 import { JwtProviderImpl } from '@/infra/auth/jwt/jwt.provider';
+import { AdminsModule } from './admins.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { JwtProviderImpl } from '@/infra/auth/jwt/jwt.provider';
       },
     }),
     ReadersModule,
+    AdminsModule,
   ],
   controllers: [],
   providers: [

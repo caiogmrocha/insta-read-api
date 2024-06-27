@@ -2,17 +2,17 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { faker } from '@faker-js/faker';
 
-import { AuthenticateReaderService } from './authenticate-reader.service';
-import { ReaderNotFoundException } from '../errors/reader-not-found.exception';
-import { ReadersRepository } from '@/app/interfaces/repositories/reader.repository';
-import { Reader } from '@/domain/entities/reader';
-import { InvalidReaderPasswordException } from '../errors/invalid-reader-password.exception';
+import { AuthenticateAdminService } from './authenticate-admin.service';
+import { Admin } from '@/domain/entities/admin';
+import { AdminsRepository } from '@/app/interfaces/repositories/admins.repository';
 import { BcryptProvider } from '@/app/interfaces/hash/bcrypt.provider';
 import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
+import { AdminNotFoundException } from '../errors/admin-not-found.exception';
+import { InvalidAdminPasswordException } from '../errors/invalid-admin-password.exception';
 
-describe('AuthenticateReaderService', () => {
-  let service: AuthenticateReaderService;
-  let readersRepository: jest.Mocked<ReadersRepository>;
+describe('AutheticateAdminService', () => {
+  let service: AuthenticateAdminService;
+  let adminsRepository: jest.Mocked<AdminsRepository>;
   let bcryptProvider: jest.Mocked<BcryptProvider>;
   let jwtProvider: jest.Mocked<JwtProvider>;
 
@@ -20,10 +20,9 @@ describe('AuthenticateReaderService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
-          provide: ReadersRepository,
+          provide: AdminsRepository,
           useClass: jest.fn().mockImplementation(() => ({
             getByEmail: jest.fn(),
-            create: jest.fn(),
           })),
         },
         {
@@ -40,82 +39,70 @@ describe('AuthenticateReaderService', () => {
             verify: jest.fn(),
           })),
         },
-        AuthenticateReaderService
+        AuthenticateAdminService
       ],
     }).compile();
 
-    service = module.get<AuthenticateReaderService>(AuthenticateReaderService);
-    readersRepository = module.get<jest.Mocked<ReadersRepository>>(ReadersRepository);
+    service = module.get<AuthenticateAdminService>(AuthenticateAdminService);
+    adminsRepository = module.get<jest.Mocked<AdminsRepository>>(AdminsRepository);
     bcryptProvider = module.get<jest.Mocked<BcryptProvider>>(BcryptProvider);
     jwtProvider = module.get<jest.Mocked<JwtProvider>>(JwtProvider);
   });
 
-  it('should throw ReaderNotFoundException when reader does not exist', async () => {
+  it('should throw AdminNotFoundException when reader does not exist', async () => {
     // Arrange
     const params = {
       email: faker.internet.email(),
       password: faker.internet.password({ length: 12 }),
     };
 
-    readersRepository.getByEmail.mockResolvedValue(null);
+    adminsRepository.getByEmail.mockResolvedValue(null);
 
     // Act
     const promise = service.execute(params);
 
     // Assert
-    await expect(promise).rejects.toThrow(ReaderNotFoundException);
+    await expect(promise).rejects.toThrow(AdminNotFoundException);
   });
 
-  it('should throw InvalidReaderPasswordException when password does not match', async () => {
+  it('should throw InvalidAdminPasswordException when password does not match', async () => {
     // Arrange
     const params = {
       email: faker.internet.email(),
       password: faker.internet.password({ length: 12 }),
     };
 
-    const mockReader = new Reader({
-      id: faker.number.int(),
-      name: faker.person.fullName(),
+    const mockAdmin = new Admin({
       email: params.email,
       password: faker.internet.password({ length: 12 }),
-      createdAt: faker.date.recent(),
-      updatedAt: null,
-      deletedAt: null,
-      deleted: false,
     });
 
-    readersRepository.getByEmail.mockResolvedValue(mockReader);
+    adminsRepository.getByEmail.mockResolvedValue(mockAdmin);
 
-    bcryptProvider.compare.mockResolvedValue(params.password === mockReader.password);
+    bcryptProvider.compare.mockResolvedValue(params.password === mockAdmin.password);
 
     // Act
     const promise = service.execute(params);
 
     // Assert
-    await expect(promise).rejects.toThrow(InvalidReaderPasswordException);
+    await expect(promise).rejects.toThrow(InvalidAdminPasswordException);
   });
 
-  it('should return a valid token when reader is authenticated', async () => {
+  it('should return a valid token when admin is authenticated', async () => {
     // Arrange
     const params = {
       email: faker.internet.email(),
       password: faker.internet.password({ length: 12 }),
     };
 
-    const mockReader = new Reader({
-      id: faker.number.int(),
-      name: faker.person.fullName(),
+    const mockAdmin = new Admin({
       email: params.email,
       password: params.password,
-      createdAt: faker.date.recent(),
-      updatedAt: null,
-      deletedAt: null,
-      deleted: false,
     });
 
-    readersRepository.getByEmail.mockResolvedValue(mockReader);
+    adminsRepository.getByEmail.mockResolvedValue(mockAdmin);
 
-    bcryptProvider.compare.mockResolvedValue(params.password === mockReader.password);
+    bcryptProvider.compare.mockResolvedValue(params.password === mockAdmin.password);
 
     jwtProvider.sign.mockResolvedValue(faker.string.uuid());
 
