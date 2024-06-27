@@ -36,7 +36,9 @@ export class AuthenticateAdminService {
       throw new InvalidAdminPasswordException(params.email);
     }
 
-    const token = await this.jwtProvider.sign({ id: admin.id }, process.env.JWT_SECRET);
+    const { ...payload } = admin;
+
+    const token = await this.jwtProvider.sign(payload, process.env.JWT_SECRET);
 
     return { token };
   }

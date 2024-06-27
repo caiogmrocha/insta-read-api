@@ -35,7 +35,9 @@ export class AuthenticateReaderService {
       throw new InvalidReaderPasswordException(params.email);
     }
 
-    const token = await this.jwtProvider.sign({ id: reader.id }, process.env.JWT_SECRET);
+    const { ...payload } = reader;
+
+    const token = await this.jwtProvider.sign(payload, process.env.JWT_SECRET);
 
     return { token };
   }
