@@ -112,5 +112,32 @@ describe('AuthenticateReaderController', () => {
     await expect(promise).rejects.toThrow();
   });
 
-  it.todo('should response with 200 when reader is authenticated');
+  it('should response with 200 when reader is authenticated', async () => {
+    // Arrange
+    const requestDto = {
+      email: faker.internet.email(),
+      password: faker.internet.password({ length: 12 }),
+    };
+
+    const mockReader = new Reader({
+      id: faker.number.int(),
+      name: faker.person.fullName(),
+      email: requestDto.email,
+      password: requestDto.password,
+      createdAt: faker.date.recent(),
+      updatedAt: null,
+      deletedAt: null,
+      deleted: false,
+    });
+
+    readersRepository.getByEmail.mockResolvedValue(mockReader);
+    bcryptProvider.compare.mockResolvedValue(true);
+    jwtProvider.sign.mockReturnValue(faker.string.uuid());
+
+    // Act
+    const response = await controller.handle(requestDto);
+
+    // Assert
+    expect(response.token).toEqual(jwtProvider.sign.mock.results[0].value);
+  });
 });
