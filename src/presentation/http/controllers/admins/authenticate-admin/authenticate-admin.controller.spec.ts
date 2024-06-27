@@ -106,5 +106,28 @@ describe('AuthenticateAdminController', () => {
     await expect(promise).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it.todo('should response with 200 when admin is authenticated');
+  it('should response with 200 when admin is authenticated', async () => {
+    // Arrange
+    const params = {
+      email: faker.internet.email(),
+      password: faker.internet.password({ length: 12 }),
+    };
+
+    const mockAdmin = new Admin({
+      email: params.email,
+      password: params.password,
+    });
+
+    adminsRepository.getByEmail.mockResolvedValue(mockAdmin);
+
+    bcryptProvider.compare.mockResolvedValue(params.password === mockAdmin.password);
+
+    jwtProvider.sign.mockResolvedValue(faker.string.uuid());
+
+    // Act
+    const response = await controller.handle(params);
+
+    // Assert
+    expect(response).toHaveProperty('token');
+  });
 });
