@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { faker } from '@faker-js/faker';
 
 import { CreateReaderAccountService } from './create-reader-account.service';
-import { ReaderEmailAlreadyExistsException } from '../errors/reader-email-already-exists.error';
+import { ReaderEmailAlreadyExistsException } from '../errors/reader-email-already-exists.exception';
 import { ReadersRepository } from '../../../interfaces/repositories/reader.repository';
 import { BcryptProvider } from '../../../interfaces/hash/bcrypt.provider';
 import { Reader } from '../../../../domain/entities/reader';

@@ -3,10 +3,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { faker } from '@faker-js/faker';
 
 import { AuthenticateReaderService } from './authenticate-reader.service';
-import { ReaderNotFoundException } from '../errors/reader-not-found-exception.error';
+import { ReaderNotFoundException } from '../errors/reader-not-found.exception';
 import { ReadersRepository } from '@/app/interfaces/repositories/reader.repository';
 import { Reader } from '@/domain/entities/reader';
-import { InvalidReaderPasswordException } from '../errors/invalid-reader-password-exception.error';
+import { InvalidReaderPasswordException } from '../errors/invalid-reader-password.exception';
 import { BcryptProvider } from '@/app/interfaces/hash/bcrypt.provider';
 import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
 
