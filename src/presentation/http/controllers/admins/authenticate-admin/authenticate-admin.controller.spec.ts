@@ -7,7 +7,8 @@ import { AuthenticateAdminService } from '@/app/services/admins/authenticate-adm
 import { AdminsRepository } from '@/app/interfaces/repositories/admins.repository';
 import { BcryptProvider } from '@/app/interfaces/hash/bcrypt.provider';
 import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
-import { NotFoundException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
+import { Admin } from '@/domain/entities/admin';
 
 describe('AuthenticateAdminController', () => {
   let controller: AuthenticateAdminController;
@@ -66,7 +67,29 @@ describe('AuthenticateAdminController', () => {
     await expect(promise).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it.todo('should response with 409 when password is invalid');
+  it('should response with 409 when password is invalid', async () => {
+    // Arrange
+    const params = {
+      email: faker.internet.email(),
+      password: faker.internet.password({ length: 12 }),
+    };
+
+    const mockAdmin = new Admin({
+      email: params.email,
+      password: faker.internet.password({ length: 12 }),
+    });
+
+    adminsRepository.getByEmail.mockResolvedValue(mockAdmin);
+
+    bcryptProvider.compare.mockResolvedValue(params.password === mockAdmin.password);
+
+    // Act
+    const promise = controller.handle(params);
+
+    // Assert
+    await expect(promise).rejects.toBeInstanceOf(ConflictException);
+  });
+
   it.todo('should response with 500 status code when an unexpected error occurs');
   it.todo('should response with 200 when admin is authenticated');
 });
