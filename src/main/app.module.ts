@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common';
 import { ReadersModule } from './readers.module';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { AuthJwtGuard } from '@/infra/guards/auth-jwt.guard';
+import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
+import { JwtProviderImpl } from '@/infra/auth/jwt/jwt.provider';
 
 @Module({
   imports: [
@@ -16,6 +19,12 @@ import { JwtModule } from '@nestjs/jwt';
     ReadersModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: JwtProvider,
+      useClass: JwtProviderImpl,
+    },
+    AuthJwtGuard,
+  ],
 })
 export class AppModule {}
