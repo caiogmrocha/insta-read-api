@@ -86,7 +86,6 @@ describe('AuthenticateReaderService', () => {
 
     readersRepository.getByEmail.mockResolvedValue(mockReader);
 
-
     bcryptProvider.compare.mockResolvedValue(params.password === mockReader.password);
 
     // Act
