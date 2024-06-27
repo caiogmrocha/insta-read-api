@@ -118,7 +118,7 @@ describe('AuthenticateReaderService', () => {
 
     bcryptProvider.compare.mockResolvedValue(params.password === mockReader.password);
 
-    jwtProvider.sign.mockReturnValue(faker.string.uuid());
+    jwtProvider.sign.mockResolvedValue(faker.string.uuid());
 
     // Act
     const result = await service.execute(params);

@@ -132,12 +132,15 @@ describe('AuthenticateReaderController', () => {
 
     readersRepository.getByEmail.mockResolvedValue(mockReader);
     bcryptProvider.compare.mockResolvedValue(true);
-    jwtProvider.sign.mockReturnValue(faker.string.uuid());
+
+    const fakeToken = faker.string.uuid();
+
+    jwtProvider.sign.mockResolvedValue(fakeToken);
 
     // Act
     const response = await controller.handle(requestDto);
 
     // Assert
-    expect(response.token).toEqual(jwtProvider.sign.mock.results[0].value);
+    expect(response.token).toEqual(fakeToken);
   });
 });
