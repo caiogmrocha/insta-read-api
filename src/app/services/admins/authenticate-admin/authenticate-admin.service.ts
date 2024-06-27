@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { AdminsRepository } from '@/app/interfaces/repositories/admins.repository';
-import { AdminNotFoundException } from '../errors/admin-not-found.exception';
 import { BcryptProvider } from '@/app/interfaces/hash/bcrypt.provider';
-import { InvalidAdminPasswordException } from '../errors/invalid-admin-password.exception';
 import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
+import { AdminNotFoundException } from '../errors/admin-not-found.exception';
+import { InvalidAdminPasswordException } from '../errors/invalid-admin-password.exception';
 
 type AutheticateAdminServiceParams = {
   email: string;
@@ -16,7 +16,7 @@ type AutheticateAdminServiceResponse = {
 };
 
 @Injectable()
-export class AutheticateAdminService {
+export class AuthenticateAdminService {
   constructor (
     @Inject(AdminsRepository) private readonly adminsRepository: AdminsRepository,
     @Inject(BcryptProvider) private readonly bcryptProvider: BcryptProvider,
