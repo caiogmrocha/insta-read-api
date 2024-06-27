@@ -1,4 +1,4 @@
-import { Body, ConflictException, Controller, NotFoundException, Post } from '@nestjs/common';
+import { Body, ConflictException, Controller, InternalServerErrorException, NotFoundException, Post } from '@nestjs/common';
 
 import { AuthenticateReaderDto } from './authenticate-reader.dto';
 import { AuthenticateReaderService } from '@/app/services/readers/authenticate-reader/authenticate-reader.service';
@@ -32,6 +32,10 @@ export class AuthenticateReaderController {
 
         case InvalidReaderPasswordException: {
           throw new ConflictException(error.message);
+        };
+
+        default: {
+          throw new InternalServerErrorException();
         };
       }
     }
