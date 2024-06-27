@@ -1,8 +1,9 @@
-import { Body, Controller, NotFoundException, Post } from '@nestjs/common';
+import { Body, ConflictException, Controller, NotFoundException, Post } from '@nestjs/common';
 
 import { AuthenticateReaderDto } from './authenticate-reader.dto';
 import { AuthenticateReaderService } from '@/app/services/readers/authenticate-reader/authenticate-reader.service';
 import { ReaderNotFoundException } from '@/app/services/readers/errors/reader-not-found-exception.error';
+import { InvalidReaderPasswordException } from '@/app/services/readers/errors/invalid-reader-password-exception.error';
 
 type AuthenticateReaderControllerResponse = {
   token: string;
@@ -27,6 +28,10 @@ export class AuthenticateReaderController {
       switch (error.constructor) {
         case ReaderNotFoundException: {
           throw new NotFoundException(error.message);
+        };
+
+        case InvalidReaderPasswordException: {
+          throw new ConflictException(error.message);
         };
       }
     }
