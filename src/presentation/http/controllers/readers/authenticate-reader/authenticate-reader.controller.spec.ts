@@ -7,7 +7,8 @@ import { AuthenticateReaderService } from '@/app/services/readers/authenticate-r
 import { ReadersRepository } from '@/app/interfaces/repositories/reader.repository';
 import { BcryptProvider } from '@/app/interfaces/hash/bcrypt.provider';
 import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
-import { NotFoundException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
+import { Reader } from '@/domain/entities/reader';
 
 describe('AuthenticateReaderController', () => {
   let controller: AuthenticateReaderController;
@@ -66,7 +67,35 @@ describe('AuthenticateReaderController', () => {
     await expect(promise).rejects.toThrow(NotFoundException);
   });
 
-  it.todo('should response with 409 when password is invalid');
+  it('should response with 409 when password is invalid', async () => {
+    // Arrange
+    const requestDto = {
+      email: faker.internet.email(),
+      password: faker.internet.password({ length: 12 }),
+    };
+
+    const mockReader = new Reader({
+      id: faker.number.int(),
+      name: faker.person.fullName(),
+      email: requestDto.email,
+      password: faker.internet.password({ length: 12 }),
+      createdAt: faker.date.recent(),
+      updatedAt: null,
+      deletedAt: null,
+      deleted: false,
+    });
+
+    readersRepository.getByEmail.mockResolvedValue(mockReader);
+
+    bcryptProvider.compare.mockResolvedValue(requestDto.password === mockReader.password);
+
+    // Act
+    const promise = controller.handle(requestDto);
+
+    // Assert
+    await expect(promise).rejects.toThrow(ConflictException);
+  });
+
   it.todo('should response with 500 status code when an unexpected error occurs');
   it.todo('should response with 200 when reader is authenticated');
 });
