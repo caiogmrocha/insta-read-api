@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { faker } from '@faker-js/faker';
 
-import { AuthenticateAdminService } from './autheticate-admin.service';
+import { AuthenticateAdminService } from './authenticate-admin.service';
 import { Admin } from '@/domain/entities/admin';
 import { AdminsRepository } from '@/app/interfaces/repositories/admins.repository';
 import { BcryptProvider } from '@/app/interfaces/hash/bcrypt.provider';
