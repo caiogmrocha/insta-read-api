@@ -96,6 +96,21 @@ describe('AuthenticateReaderController', () => {
     await expect(promise).rejects.toThrow(ConflictException);
   });
 
-  it.todo('should response with 500 status code when an unexpected error occurs');
+  it('should response with 500 status code when an unexpected error occurs', async () => {
+    // Arrange
+    const requestDto = {
+      email: faker.internet.email(),
+      password: faker.internet.password({ length: 12 }),
+    };
+
+    readersRepository.getByEmail.mockRejectedValue(new Error('Unexpected error'));
+
+    // Act
+    const promise = controller.handle(requestDto);
+
+    // Assert
+    await expect(promise).rejects.toThrow();
+  });
+
   it.todo('should response with 200 when reader is authenticated');
 });
