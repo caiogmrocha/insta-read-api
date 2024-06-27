@@ -7,7 +7,7 @@ import { AuthenticateAdminService } from '@/app/services/admins/authenticate-adm
 import { AdminsRepository } from '@/app/interfaces/repositories/admins.repository';
 import { BcryptProvider } from '@/app/interfaces/hash/bcrypt.provider';
 import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import { ConflictException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Admin } from '@/domain/entities/admin';
 
 describe('AuthenticateAdminController', () => {
@@ -90,6 +90,21 @@ describe('AuthenticateAdminController', () => {
     await expect(promise).rejects.toBeInstanceOf(ConflictException);
   });
 
-  it.todo('should response with 500 status code when an unexpected error occurs');
+  it('should response with 500 status code when an unexpected error occurs', async () => {
+    // Arrange
+    const params = {
+      email: faker.internet.email(),
+      password: faker.internet.password({ length: 12 }),
+    };
+
+    adminsRepository.getByEmail.mockRejectedValue(new Error());
+
+    // Act
+    const promise = controller.handle(params);
+
+    // Assert
+    await expect(promise).rejects.toBeInstanceOf(InternalServerErrorException);
+  });
+
   it.todo('should response with 200 when admin is authenticated');
 });
