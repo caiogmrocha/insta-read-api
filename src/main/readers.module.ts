@@ -7,6 +7,10 @@ import { PrismaReadersRepository } from '@/infra/repositories/prisma/prisma-read
 import { BcryptProviderImpl } from '@/infra/hash/bcrypt/bcrypt.provider';
 import { PrismaProvider } from '@/infra/repositories/prisma/prisma.provider';
 import { BcryptProvider } from '@/app/interfaces/hash/bcrypt.provider';
+import { AuthenticateReaderService } from '@/app/services/readers/authenticate-reader/authenticate-reader.service';
+import { AuthenticateReaderController } from '@/presentation/http/controllers/readers/authenticate-reader/authenticate-reader.controller';
+import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
+import { JwtProviderImpl } from '@/infra/auth/jwt/jwt.provider';
 
 @Module({
   providers: [
@@ -19,10 +23,16 @@ import { BcryptProvider } from '@/app/interfaces/hash/bcrypt.provider';
       provide: ReadersRepository,
       useClass: PrismaReadersRepository,
     },
+    {
+      provide: JwtProvider,
+      useClass: JwtProviderImpl,
+    },
     CreateReaderAccountService,
+    AuthenticateReaderService,
   ],
   controllers: [
     CreateReaderAccountController,
+    AuthenticateReaderController,
   ],
 })
 export class ReadersModule {}
