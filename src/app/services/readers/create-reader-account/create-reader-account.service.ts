@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Reader } from '@/domain/entities/reader';
 import { ReadersRepository } from '@/app/interfaces/repositories/reader.repository';
 import { BcryptProvider } from '@/app/interfaces/hash/bcrypt.provider';
-import { ReaderEmailAlreadyExistsException } from '@/app/services/readers/errors/reader-email-already-exists.error';
+import { ReaderEmailAlreadyExistsException } from '@/app/services/readers/errors/reader-email-already-exists.exception';
 
 const PASSWORD_HASH_SALT_ROUNDS = 10;
 

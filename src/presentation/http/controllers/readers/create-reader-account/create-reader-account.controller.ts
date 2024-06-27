@@ -2,7 +2,7 @@ import { Body, ConflictException, Controller, InternalServerErrorException, Post
 
 import { CreateReaderAccountDto } from './create-reader-account.dto';
 import { CreateReaderAccountService } from '@/app/services/readers/create-reader-account/create-reader-account.service';
-import { ReaderEmailAlreadyExistsException } from '@/app/services/readers/errors/reader-email-already-exists.error';
+import { ReaderEmailAlreadyExistsException } from '@/app/services/readers/errors/reader-email-already-exists.exception';
 
 @Controller()
 export class CreateReaderAccountController {

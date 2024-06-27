@@ -2,8 +2,8 @@ import { Body, ConflictException, Controller, InternalServerErrorException, NotF
 
 import { AuthenticateReaderDto } from './authenticate-reader.dto';
 import { AuthenticateReaderService } from '@/app/services/readers/authenticate-reader/authenticate-reader.service';
-import { ReaderNotFoundException } from '@/app/services/readers/errors/reader-not-found-exception.error';
-import { InvalidReaderPasswordException } from '@/app/services/readers/errors/invalid-reader-password-exception.error';
+import { ReaderNotFoundException } from '@/app/services/readers/errors/reader-not-found.exception';
+import { InvalidReaderPasswordException } from '@/app/services/readers/errors/invalid-reader-password.exception';
 
 type AuthenticateReaderControllerResponse = {
   token: string;
