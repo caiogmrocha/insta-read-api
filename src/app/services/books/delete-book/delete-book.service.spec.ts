@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DeleteBookService } from './delete-book.service';
 import { BooksRepository } from '@/app/interfaces/repositories/books.repository';
 import { BookNotFoundException } from '../errors/book-not-found.exception';
+import { Book } from '@/domain/entities/book';
 
 describe('DeleteBookService', () => {
   let service: DeleteBookService;
@@ -38,5 +39,18 @@ describe('DeleteBookService', () => {
     await expect(result).rejects.toThrow(BookNotFoundException);
   });
 
-  it.todo('should delete a book');
+  it('should delete a book', async () => {
+    // Arrange
+    const bookId = 1;
+
+    const book = new Book({ id: bookId })
+
+    booksRepository.getById.mockResolvedValue(book);
+
+    // Act
+    await service.execute({ id: bookId });
+
+    // Assert
+    expect(booksRepository.delete).toHaveBeenCalled();
+  });
 });
