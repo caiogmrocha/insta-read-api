@@ -5,6 +5,7 @@ export type BookProps = Partial<{
   title: string;
   sinopsis: string;
   pages: number;
+  author: string;
   category: string;
   publisher: string;
   publicationDate: Date;
