@@ -37,6 +37,17 @@ export class PrismaBooksRepository implements BooksRepository {
   }
 
   public async create(book: Book): Promise<void> {
-    throw new Error("Method not implemented.");
+    await this.prisma.book.create({
+      data: {
+        isbn: book.isbn,
+        title: book.title,
+        sinopsis: book.sinopsis,
+        pages: book.pages,
+        author: book.author,
+        category: book.category,
+        publisher: book.publisher,
+        publicationDate: book.publicationDate,
+      },
+    });
   }
 }

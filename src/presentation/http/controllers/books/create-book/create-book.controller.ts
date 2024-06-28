@@ -1,7 +1,10 @@
-import { CreateBookService } from '@/app/services/books/create-book/create-book.service';
-import { Body, ConflictException, Controller, InternalServerErrorException, Post } from '@nestjs/common';
+import { Body, ConflictException, Controller, InternalServerErrorException, Post, UseGuards } from '@nestjs/common';
+
 import { CreateBookDto } from './create-book.dto';
+import { CreateBookService } from '@/app/services/books/create-book/create-book.service';
 import { BookISBNAlreadyExistsException } from '@/app/services/books/create-book/errors/book-isbn-already-exists.exception';
+import { AuthAdminGuard } from '@/infra/guards/auth-admin.guard';
+import { AuthJwtGuard } from '@/infra/guards/auth-jwt.guard';
 
 @Controller()
 export class CreateBookController {
@@ -9,6 +12,7 @@ export class CreateBookController {
     private readonly createBookService: CreateBookService,
   ) {}
 
+  @UseGuards(AuthJwtGuard, AuthAdminGuard)
   @Post('/api/books')
   public async handle(@Body() requestDto: CreateBookDto): Promise<void> {
     try {

@@ -1,4 +1,5 @@
-import { IsDate, IsDateString, IsISBN, IsNotEmpty, MaxLength, Min, MinLength } from "class-validator";
+import { Transform, Type } from "class-transformer";
+import { IsDate, IsISBN, IsNotEmpty, MaxLength, Min, MinLength } from "class-validator";
 
 export class CreateBookDto {
   @IsNotEmpty()
@@ -12,7 +13,7 @@ export class CreateBookDto {
 
   @IsNotEmpty()
   @MinLength(0)
-  @MaxLength(255)
+  @MaxLength(65535)
   sinopsis: string;
 
   @IsNotEmpty()
@@ -35,6 +36,8 @@ export class CreateBookDto {
   publisher: string;
 
   @IsNotEmpty()
-  @IsDateString()
+  @IsDate()
+  @Type(() => Date)
+  @Transform(({ value }) => new Date(value))
   publicationDate: Date;
 }
