@@ -1,9 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CreateBookController } from './create-book.controller';
-import { BooksRepository } from '@/app/interfaces/repositories/books.repository';
-import { CreateBookService } from '@/app/services/books/create-book/create-book.service';
+
 import { faker } from '@faker-js/faker';
+
 import { Book } from '@/domain/entities/book';
+import { CreateBookController } from './create-book.controller';
+import { CreateBookService } from '@/app/services/books/create-book/create-book.service';
+import { BooksRepository } from '@/app/interfaces/repositories/books.repository';
+import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
 import { ConflictException, InternalServerErrorException } from '@nestjs/common';
 
 describe('CreateBookController', () => {
@@ -19,6 +22,10 @@ describe('CreateBookController', () => {
             getByISBN: jest.fn(),
             create: jest.fn(),
           })),
+        },
+        {
+          provide: JwtProvider,
+          useClass: jest.fn().mockImplementation(() => ({})),
         },
         CreateBookService,
       ],
