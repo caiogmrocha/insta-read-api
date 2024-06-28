@@ -9,6 +9,7 @@ type CreateBookServiceParams = {
   title: string;
   sinopsis: string;
   pages: number;
+  amount: number;
   author: string;
   category: string;
   publisher: string;
