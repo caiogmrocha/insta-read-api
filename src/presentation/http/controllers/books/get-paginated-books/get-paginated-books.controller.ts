@@ -1,4 +1,4 @@
-import { Body, Controller, InternalServerErrorException, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, InternalServerErrorException, Post, Query, UseGuards, ValidationPipe } from '@nestjs/common';
 import { GetPaginatedBooksDto } from './get-paginated-books.dto';
 import { GetPaginatedBooksService } from '@/app/services/books/get-paginated-books/get-paginated-books.service';
 import { AuthJwtGuard } from '@/infra/guards/auth-jwt.guard';
@@ -12,8 +12,10 @@ export class GetPaginatedBooksController {
   ) {}
 
   @UseGuards(AuthJwtGuard)
-  @Post('/api/books')
-  public async handle(@Body() requestDto: GetPaginatedBooksDto) {
+  @Get('/api/books')
+  public async handle(
+    @Query() requestDto: GetPaginatedBooksDto,
+  ) {
     try {
       const result = await this.getPaginatedBooksService.execute(requestDto);
 
