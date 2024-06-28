@@ -38,7 +38,8 @@ model Book {
   isbn      String    @unique
   title     String    @db.VarChar(255)
   sinopsis  String    @db.Text
-  pages     Int
+  pages     Int       @db.UnsignedInt
+  amount    Int       @db.UnsignedInt @default(0)
   author    String
   category  String
   publisher String
