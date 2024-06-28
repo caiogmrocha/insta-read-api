@@ -4,7 +4,7 @@ import { BooksRepository } from '@/app/interfaces/repositories/books.repository'
 import { CreateBookService } from '@/app/services/books/create-book/create-book.service';
 import { faker } from '@faker-js/faker';
 import { Book } from '@/domain/entities/book';
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, InternalServerErrorException } from '@nestjs/common';
 
 describe('CreateBookController', () => {
   let controller: CreateBookController;
@@ -73,5 +73,25 @@ describe('CreateBookController', () => {
     await expect(promise).rejects.toThrow(ConflictException);
   });
 
-  it.todo('should response with 500 status code when an unexpected error occurs');
+  it('should response with 500 status code when an unexpected error occurs', async () => {
+    // Arrange
+    const params = {
+      isbn: faker.helpers.replaceSymbols('###-#-######-##-#'),
+      title: faker.commerce.productName(),
+      sinopsis: faker.lorem.paragraph(),
+      pages: faker.number.int({ min: 50, max: 500 }),
+      author: faker.person.fullName(),
+      category: faker.commerce.department(),
+      publisher: faker.company.name(),
+      publicationDate: faker.date.past(),
+    };
+
+    booksRepository.getByISBN.mockRejectedValue(new Error('Unexpected error'));
+
+    // Act
+    const promise = controller.handle(params);
+
+    // Assert
+    await expect(promise).rejects.toThrow(InternalServerErrorException);
+  });
 });
