@@ -3,7 +3,7 @@ import { DeleteBookController } from './delete-book.controller';
 import { BooksRepository } from '@/app/interfaces/repositories/books.repository';
 import { DeleteBookService } from '@/app/services/books/delete-book/delete-book.service';
 import { Book } from '@/domain/entities/book';
-import { NotFoundException } from '@nestjs/common';
+import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
 
 describe('DeleteBookController', () => {
   let controller: DeleteBookController;
@@ -56,5 +56,18 @@ describe('DeleteBookController', () => {
     await expect(result).rejects.toThrow(NotFoundException);
   });
 
-  it.todo('should response with 500 if something unexpected happens when trying to delete the book');
+  it('should response with 500 if something unexpected happens when trying to delete the book', async () => {
+    // Arrange
+    const bookId = 1;
+
+    const error = new Error('Unexpected error');
+
+    booksRepository.getById.mockRejectedValue(error);
+
+    // Act
+    const result = controller.handle({ id: bookId });
+
+    // Assert
+    await expect(result).rejects.toThrow(InternalServerErrorException);
+  });
 });
