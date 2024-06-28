@@ -1,6 +1,7 @@
 import { CreateBookService } from '@/app/services/books/create-book/create-book.service';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, ConflictException, Controller, InternalServerErrorException, Post } from '@nestjs/common';
 import { CreateBookDto } from './create-book.dto';
+import { BookISBNAlreadyExistsException } from '@/app/services/books/create-book/errors/book-isbn-already-exists.exception';
 
 @Controller()
 export class CreateBookController {
@@ -13,7 +14,15 @@ export class CreateBookController {
     try {
       await this.createBookService.execute(requestDto);
     } catch (error) {
-      console.error(error);
+      switch (error.constructor) {
+        case BookISBNAlreadyExistsException: {
+          throw new ConflictException(error.message);
+        };
+
+        default: {
+          throw new InternalServerErrorException(error);
+        };
+      }
     }
   }
 }
