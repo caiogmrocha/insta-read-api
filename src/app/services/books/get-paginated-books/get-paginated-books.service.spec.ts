@@ -57,4 +57,24 @@ describe('GetPaginatedBooksService', () => {
     });
     expect(result.data).toHaveLength(10);
   });
+
+  it('should return a list of books paginated in the second page', async () => {
+    // Arrange
+    const params = {
+      page: 2,
+      limit: 10,
+    };
+
+    // Act
+    const result = await service.execute(params);
+
+    // Assert
+    expect(result).toEqual({
+      data: mockedBooks.slice(10, 20),
+      total: mockedBooks.length,
+    });
+    expect(result.data).toHaveLength(10);
+  });
+
+  it.todo('should return a list of books only with specific fields');
 });
