@@ -36,8 +36,8 @@ model Admin {
 model Book {
   id        Int       @id @default(autoincrement())
   isbn      String    @unique
-  title     String
-  sinopsis  String
+  title     String    @db.VarChar(255)
+  sinopsis  String    @db.Text
   pages     Int
   author    String
   category  String
