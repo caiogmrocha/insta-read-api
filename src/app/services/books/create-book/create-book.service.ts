@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { Book } from '@/domain/entities/book';
 import { BooksRepository } from '@/app/interfaces/repositories/books.repository';
-import { BookISBNAlreadyExistsException } from './errors/book-isbn-already-exists.exception';
+import { BookISBNAlreadyExistsException } from '../errors/book-isbn-already-exists.exception';
 
 type CreateBookServiceParams = {
   isbn: string;

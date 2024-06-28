@@ -4,7 +4,7 @@ import { faker } from '@faker-js/faker';
 
 import { CreateBookService } from './create-book.service';
 import { Book } from '@/domain/entities/book';
-import { BookISBNAlreadyExistsException } from './errors/book-isbn-already-exists.exception';
+import { BookISBNAlreadyExistsException } from '../errors/book-isbn-already-exists.exception';
 import { BooksRepository } from '@/app/interfaces/repositories/books.repository';
 
 describe('CreateBookService', () => {
