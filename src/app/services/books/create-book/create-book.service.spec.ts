@@ -4,7 +4,7 @@ import { faker } from '@faker-js/faker';
 
 import { CreateBookService } from './create-book.service';
 import { Book } from '@/domain/entities/book';
-import { BookISBNAlreadyExistsException } from './errors/book-isbn-already-exists.exception';
+import { BookISBNAlreadyExistsException } from '../errors/book-isbn-already-exists.exception';
 import { BooksRepository } from '@/app/interfaces/repositories/books.repository';
 
 describe('CreateBookService', () => {
@@ -36,6 +36,7 @@ describe('CreateBookService', () => {
       title: faker.commerce.productName(),
       sinopsis: faker.lorem.paragraph(),
       pages: faker.number.int({ min: 50, max: 500 }),
+      amount: faker.number.int({ min: 1, max: 100 }),
       author: faker.person.fullName(),
       category: faker.commerce.department(),
       publisher: faker.company.name(),
@@ -60,6 +61,7 @@ describe('CreateBookService', () => {
       title: faker.commerce.productName(),
       sinopsis: faker.lorem.paragraph(),
       pages: faker.number.int({ min: 50, max: 500 }),
+      amount: faker.number.int({ min: 1, max: 100 }),
       author: faker.person.fullName(),
       category: faker.commerce.department(),
       publisher: faker.company.name(),

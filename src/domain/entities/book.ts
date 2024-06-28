@@ -6,6 +6,7 @@ export type BookProps = Partial<{
   title: string;
   sinopsis: string;
   pages: number;
+  amount: number;
   author: string;
   category: string;
   publisher: string;
@@ -18,6 +19,7 @@ export class Book extends Entity<BookProps> implements BookProps {
   public title: string;
   public sinopsis: string;
   public pages: number;
+  public amount: number;
   public author: string;
   public category: string;
   public publisher: string;

@@ -21,6 +21,10 @@ export class CreateBookDto {
   pages: number;
 
   @IsNotEmpty()
+  @Min(1)
+  amount: number;
+
+  @IsNotEmpty()
   @MinLength(0)
   @MaxLength(255)
   author: string;

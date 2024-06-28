@@ -1,9 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CreateBookController } from './create-book.controller';
-import { BooksRepository } from '@/app/interfaces/repositories/books.repository';
-import { CreateBookService } from '@/app/services/books/create-book/create-book.service';
+
 import { faker } from '@faker-js/faker';
+
 import { Book } from '@/domain/entities/book';
+import { CreateBookController } from './create-book.controller';
+import { CreateBookService } from '@/app/services/books/create-book/create-book.service';
+import { BooksRepository } from '@/app/interfaces/repositories/books.repository';
+import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
 import { ConflictException, InternalServerErrorException } from '@nestjs/common';
 
 describe('CreateBookController', () => {
@@ -19,6 +22,10 @@ describe('CreateBookController', () => {
             getByISBN: jest.fn(),
             create: jest.fn(),
           })),
+        },
+        {
+          provide: JwtProvider,
+          useClass: jest.fn().mockImplementation(() => ({})),
         },
         CreateBookService,
       ],
@@ -36,6 +43,7 @@ describe('CreateBookController', () => {
       title: faker.commerce.productName(),
       sinopsis: faker.lorem.paragraph(),
       pages: faker.number.int({ min: 50, max: 500 }),
+      amount: faker.number.int({ min: 1, max: 100 }),
       author: faker.person.fullName(),
       category: faker.commerce.department(),
       publisher: faker.company.name(),
@@ -58,6 +66,7 @@ describe('CreateBookController', () => {
       title: faker.commerce.productName(),
       sinopsis: faker.lorem.paragraph(),
       pages: faker.number.int({ min: 50, max: 500 }),
+      amount: faker.number.int({ min: 1, max: 100 }),
       author: faker.person.fullName(),
       category: faker.commerce.department(),
       publisher: faker.company.name(),
@@ -80,6 +89,7 @@ describe('CreateBookController', () => {
       title: faker.commerce.productName(),
       sinopsis: faker.lorem.paragraph(),
       pages: faker.number.int({ min: 50, max: 500 }),
+      amount: faker.number.int({ min: 1, max: 100 }),
       author: faker.person.fullName(),
       category: faker.commerce.department(),
       publisher: faker.company.name(),

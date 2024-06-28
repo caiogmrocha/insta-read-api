@@ -25,6 +25,7 @@ export class PrismaBooksRepository implements BooksRepository {
       title: book.title,
       sinopsis: book.sinopsis,
       pages: book.pages,
+      amount: book.amount,
       author: book.author,
       category: book.category,
       publisher: book.publisher,
@@ -36,6 +37,26 @@ export class PrismaBooksRepository implements BooksRepository {
     });
   }
 
+  public async getPaginated(params: { page: number; limit: number; fields?: (keyof Book)[]; }): Promise<{ data: any[]; total: number; }> {
+    const books = await this.prisma.book.findMany({
+      skip: (params.page - 1) * params.limit,
+      take: params.limit,
+      select: (params.fields && params.fields.length)
+        ? params.fields.reduce((acc, field) => {
+          acc[field] = true;
+          return acc;
+        }, {})
+        : undefined,
+    });
+
+    const total = await this.prisma.book.count();
+
+    return {
+      data: books,
+      total,
+    };
+  }
+
   public async create(book: Book): Promise<void> {
     await this.prisma.book.create({
       data: {
@@ -43,6 +64,7 @@ export class PrismaBooksRepository implements BooksRepository {
         title: book.title,
         sinopsis: book.sinopsis,
         pages: book.pages,
+        amount: book.amount,
         author: book.author,
         category: book.category,
         publisher: book.publisher,

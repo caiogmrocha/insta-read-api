@@ -2,7 +2,7 @@ import { Body, ConflictException, Controller, InternalServerErrorException, Post
 
 import { CreateBookDto } from './create-book.dto';
 import { CreateBookService } from '@/app/services/books/create-book/create-book.service';
-import { BookISBNAlreadyExistsException } from '@/app/services/books/create-book/errors/book-isbn-already-exists.exception';
+import { BookISBNAlreadyExistsException } from '@/app/services/books/errors/book-isbn-already-exists.exception';
 import { AuthAdminGuard } from '@/infra/guards/auth-admin.guard';
 import { AuthJwtGuard } from '@/infra/guards/auth-jwt.guard';
 
