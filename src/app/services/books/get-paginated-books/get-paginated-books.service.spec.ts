@@ -4,45 +4,43 @@ import { BooksRepository } from '@/app/interfaces/repositories/books.repository'
 import { faker } from '@faker-js/faker';
 import { Book } from '@/domain/entities/book';
 
-export let bookRepositoryGetPaginatedMock: jest.Mock;
+export const mockedBooks = faker.helpers.multiple(() => new Book({
+  isbn: faker.helpers.replaceSymbols('###-#-######-##-#'),
+  title: faker.commerce.productName(),
+  sinopsis: faker.lorem.paragraph(),
+  pages: faker.number.int({ min: 50, max: 500 }),
+  amount: faker.number.int({ min: 1, max: 100 }),
+  author: faker.person.fullName(),
+  category: faker.commerce.department(),
+  publisher: faker.company.name(),
+  publicationDate: faker.date.past(),
+}), { count: 20 });
+
+export let bookRepositoryGetPaginatedMock= jest.fn((params: Parameters<BooksRepository['getPaginated']>[0]) => {
+  let processedBooks = mockedBooks.slice((params.page - 1) * params.limit, params.page * params.limit);
+
+  if (params.fields) {
+    processedBooks = processedBooks.map((book) => {
+      const bookProps = Object.entries(book);
+
+      const filteredProps = bookProps.filter(([key]) => params.fields.includes(key as keyof Book));
+
+      const filteredBook = Object.fromEntries(filteredProps);
+
+      const newBook = new Book(filteredBook);
+
+      return newBook;
+    });
+  }
+
+  return Promise.resolve({
+    data: processedBooks,
+    total: mockedBooks.length,
+  });
+});
 
 describe('GetPaginatedBooksService', () => {
   let service: GetPaginatedBooksService;
-
-  const mockedBooks = faker.helpers.multiple(() => new Book({
-    isbn: faker.helpers.replaceSymbols('###-#-######-##-#'),
-    title: faker.commerce.productName(),
-    sinopsis: faker.lorem.paragraph(),
-    pages: faker.number.int({ min: 50, max: 500 }),
-    amount: faker.number.int({ min: 1, max: 100 }),
-    author: faker.person.fullName(),
-    category: faker.commerce.department(),
-    publisher: faker.company.name(),
-    publicationDate: faker.date.past(),
-  }), { count: 20 })
-
-  bookRepositoryGetPaginatedMock = jest.fn((params: Parameters<BooksRepository['getPaginated']>[0]) => {
-    let processedBooks = mockedBooks.slice((params.page - 1) * params.limit, params.page * params.limit);
-
-    if (params.fields) {
-      processedBooks = processedBooks.map((book) => {
-        const bookProps = Object.entries(book);
-
-        const filteredProps = bookProps.filter(([key]) => params.fields.includes(key as keyof Book));
-
-        const filteredBook = Object.fromEntries(filteredProps);
-
-        const newBook = new Book(filteredBook);
-
-        return newBook;
-      });
-    }
-
-    return Promise.resolve({
-      data: processedBooks,
-      total: mockedBooks.length,
-    });
-  });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -75,7 +73,7 @@ describe('GetPaginatedBooksService', () => {
       data: expect.any(Array),
       total: mockedBooks.length,
     });
-    expect(result.data).toHaveLength(10);
+    expect(result.data).toHaveLength(params.limit);
   });
 
   it('should return a list of books paginated in the second page', async () => {
@@ -93,7 +91,7 @@ describe('GetPaginatedBooksService', () => {
       data: mockedBooks.slice(10, 20),
       total: mockedBooks.length,
     });
-    expect(result.data).toHaveLength(10);
+    expect(result.data).toHaveLength(params.limit);
   });
 
   it('should return a list of books only with specific fields', async () => {
@@ -124,6 +122,6 @@ describe('GetPaginatedBooksService', () => {
     expect(result.data[0]).not.toHaveProperty('category');
     expect(result.data[0]).not.toHaveProperty('publisher');
     expect(result.data[0]).not.toHaveProperty('publicationDate');
-    expect(result.data).toHaveLength(10);
+    expect(result.data).toHaveLength(params.limit);
   });
 });
