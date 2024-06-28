@@ -7,6 +7,9 @@ export type EntityProps = Partial<{
 
 export abstract class Entity<T extends EntityProps> {
   constructor(props: T) {
+    props.createdAt = props.createdAt ?? new Date();
+    props.deleted = props.deleted ?? false;
+
     Object.assign(this, props);
   }
 

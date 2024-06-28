@@ -6,6 +6,7 @@ import { AuthJwtGuard } from '@/infra/guards/auth-jwt.guard';
 import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
 import { JwtProviderImpl } from '@/infra/auth/jwt/jwt.provider';
 import { AdminsModule } from './admins.module';
+import { BooksModule } from './books.module';
 
 @Module({
   imports: [
@@ -17,8 +18,9 @@ import { AdminsModule } from './admins.module';
         expiresIn: process.env.JWT_EXPIRATION_TIME,
       },
     }),
-    ReadersModule,
     AdminsModule,
+    ReadersModule,
+    BooksModule,
   ],
   controllers: [],
   providers: [
