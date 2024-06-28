@@ -5,6 +5,7 @@ import { bookRepositoryGetPaginatedMock, mockedBooks } from '@/app/services/book
 import { GetPaginatedBooksController } from './get-paginated-books.controller';
 import { GetPaginatedBooksService } from '@/app/services/books/get-paginated-books/get-paginated-books.service';
 import { BooksRepository } from '@/app/interfaces/repositories/books.repository';
+import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
 
 describe('GetPaginatedBooksController', () => {
   let controller: GetPaginatedBooksController;
@@ -17,6 +18,10 @@ describe('GetPaginatedBooksController', () => {
           useClass: jest.fn().mockImplementation(() => ({
             getPaginated: bookRepositoryGetPaginatedMock,
           })),
+        },
+        {
+          provide: JwtProvider,
+          useClass: jest.fn().mockImplementation(() => ({})),
         },
         GetPaginatedBooksService,
       ],
