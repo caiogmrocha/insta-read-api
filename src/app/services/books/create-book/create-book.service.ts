@@ -26,5 +26,7 @@ export class CreateBookService {
     if (book) {
       throw new BookISBNAlreadyExistsException(params.isbn);
     }
+
+    await this.booksRepository.create(new Book(params));
   }
 }
