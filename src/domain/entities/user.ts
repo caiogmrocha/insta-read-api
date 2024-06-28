@@ -20,9 +20,6 @@ export abstract class User extends Entity<UserProps> implements UserProps {
   public deleted: boolean;
 
   constructor(props: UserProps) {
-    props.createdAt = props.createdAt ?? new Date();
-    props.deleted = props.deleted ?? false;
-
     super(props);
   }
 }
