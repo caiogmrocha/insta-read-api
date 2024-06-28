@@ -7,6 +7,8 @@ import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
 import { JwtProviderImpl } from '@/infra/auth/jwt/jwt.provider';
 import { AdminsModule } from './admins.module';
 import { BooksModule } from './books.module';
+import { AuthAdminGuard } from '@/infra/guards/auth-admin.guard';
+import { AuthReaderGuard } from '@/infra/guards/auth-reader.guard';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { BooksModule } from './books.module';
       useClass: JwtProviderImpl,
     },
     AuthJwtGuard,
+    AuthAdminGuard,
+    AuthReaderGuard,
   ],
 })
 export class AppModule {}
