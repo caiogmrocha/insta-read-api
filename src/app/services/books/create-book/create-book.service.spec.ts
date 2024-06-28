@@ -27,28 +27,6 @@ describe('CreateBookService', () => {
     booksRepository = module.get<jest.Mocked<BooksRepository>>(BooksRepository);
   });
 
-  it('should throw BookISBNAlreadyExistsException when ISBN already exists', async () => {
-    // Arrange
-    const params = {
-      isbn: faker.helpers.replaceSymbols('###-#-######-##-#'),
-      title: faker.commerce.productName(),
-      sinopsis: faker.lorem.paragraph(),
-      pages: faker.number.int({ min: 50, max: 500 }),
-      author: faker.person.fullName(),
-      category: faker.commerce.department(),
-      publisher: faker.company.name(),
-      publicationDate: faker.date.past(),
-    };
-
-    booksRepository.getByISBN.mockResolvedValue(new Book(params));
-
-    // Act
-    const promise = service.execute(params);
-
-    // Assert
-    await expect(promise).rejects.toThrow(BookISBNAlreadyExistsException);
-  });
-
   it('should create a new book', async () => {
     // Arrange
     const params = {
@@ -71,5 +49,27 @@ describe('CreateBookService', () => {
     // Assert
     await expect(promise).resolves.toBeUndefined();
     expect(booksRepository.create).toHaveBeenCalled();
+  });
+
+  it('should throw BookISBNAlreadyExistsException when ISBN already exists', async () => {
+    // Arrange
+    const params = {
+      isbn: faker.helpers.replaceSymbols('###-#-######-##-#'),
+      title: faker.commerce.productName(),
+      sinopsis: faker.lorem.paragraph(),
+      pages: faker.number.int({ min: 50, max: 500 }),
+      author: faker.person.fullName(),
+      category: faker.commerce.department(),
+      publisher: faker.company.name(),
+      publicationDate: faker.date.past(),
+    };
+
+    booksRepository.getByISBN.mockResolvedValue(new Book(params));
+
+    // Act
+    const promise = service.execute(params);
+
+    // Assert
+    await expect(promise).rejects.toThrow(BookISBNAlreadyExistsException);
   });
 });
