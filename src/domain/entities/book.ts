@@ -2,6 +2,7 @@ import { Entity, EntityProps } from "./entity";
 
 export type BookProps = Partial<{
   id: number;
+  isbn: string;
   title: string;
   sinopsis: string;
   pages: number;
