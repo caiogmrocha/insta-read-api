@@ -3,13 +3,13 @@ import { Transform } from "class-transformer";
 import { IsArray, IsIn, IsInt, IsOptional, IsPositive, IsString } from "class-validator";
 
 export class GetPaginatedBooksDto {
-  @Transform(({ value }) => value ? parseInt(value, 10) : 1)
   @IsInt()
+  @Transform(({ value }) => value ? parseInt(value, 10) : 1)
   @IsPositive()
   page: number;
 
-  @Transform(({ value }) => value ? parseInt(value, 10) : 1)
   @IsInt()
+  @Transform(({ value }) => value ? parseInt(value, 10) : 1)
   @IsPositive()
   limit: number;
 

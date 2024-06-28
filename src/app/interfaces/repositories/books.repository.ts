@@ -1,6 +1,8 @@
 import { Book } from "@/domain/entities/book";
 
 export interface BooksRepository {
+  getById(id: number): Promise<Book | null>;
+
   getByISBN(isbn: string): Promise<Book | null>;
 
   getPaginated(params: {
@@ -13,6 +15,7 @@ export interface BooksRepository {
   }>;
 
   create(book: Book): Promise<void>;
+  delete(id: number): Promise<void>;
 }
 
 export const BooksRepository = Symbol('BooksRepository');
