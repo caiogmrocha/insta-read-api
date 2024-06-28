@@ -32,3 +32,21 @@ model Admin {
 
   @@map("admins")
 }
+
+model Book {
+  id        Int       @id @default(autoincrement())
+  isbn      String    @unique
+  title     String
+  sinopsis  String
+  pages     Int
+  author    String
+  category  String
+  publisher String
+  publicationDate DateTime @map("publication_date")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  deleted   Boolean   @default(false)
+
+  @@map("books")
+}
