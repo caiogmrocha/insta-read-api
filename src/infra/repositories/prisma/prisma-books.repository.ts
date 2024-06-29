@@ -101,6 +101,15 @@ export class PrismaBooksRepository implements BooksRepository {
     });
   }
 
+  public async update(book: Book): Promise<void> {
+    const { id, ...data } = book;
+
+    await this.prisma.book.update({
+      where: { id },
+      data,
+    });
+  }
+
   public async delete(id: number): Promise<void> {
     await this.prisma.book.delete({
       where: {
