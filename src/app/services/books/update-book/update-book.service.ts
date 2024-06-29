@@ -1,6 +1,7 @@
 import { BooksRepository } from '@/app/interfaces/repositories/books.repository';
 import { Inject, Injectable } from '@nestjs/common';
 import { BookNotFoundException } from '../errors/book-not-found.exception';
+import { BookISBNAlreadyExistsException } from '../errors/book-isbn-already-exists.exception';
 
 export type UpdateBookServiceParams = {
   id: number;
@@ -26,6 +27,14 @@ export class UpdateBookService {
 
     if (!book) {
       throw new BookNotFoundException('id', params.id);
+    }
+
+    if (book.isbn !== params.isbn) {
+      const bookWithSameISBN = await this.booksRepository.getByISBN(params.isbn);
+
+      if (bookWithSameISBN) {
+        throw new BookISBNAlreadyExistsException(params.isbn);
+      }
     }
   }
 }
