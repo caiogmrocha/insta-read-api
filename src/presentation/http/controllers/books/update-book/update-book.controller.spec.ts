@@ -1,4 +1,4 @@
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import { ConflictException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { faker } from '@faker-js/faker';
@@ -111,5 +111,30 @@ describe('UpdateBookController', () => {
     await expect(promise).rejects.toThrow(ConflictException);
   });
 
-  it.todo('should response with 500 when any error happens');
+  it('should response with 500 when any error happens', async () => {
+    // Arrange
+    const params: UpdateBookParamsDto = {
+      id: faker.number.int(),
+    };
+
+    const body: UpdateBookBodyDto = {
+      isbn: faker.helpers.replaceSymbols('###-#-##-#####-#'),
+      title: faker.lorem.words(),
+      sinopsis: faker.lorem.paragraph(),
+      pages: faker.number.int(),
+      amount: faker.number.int(),
+      author: faker.person.fullName(),
+      category: faker.lorem.word(),
+      publisher: faker.company.name(),
+      publicationDate: faker.date.recent(),
+    };
+
+    booksRepository.getById.mockRejectedValue(new Error());
+
+    // Act
+    const promise = controller.handle(params, body);
+
+    // Assert
+    await expect(promise).rejects.toThrow(InternalServerErrorException);
+  });
 });
