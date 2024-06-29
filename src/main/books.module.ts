@@ -11,6 +11,8 @@ import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
 import { JwtProviderImpl } from '@/infra/auth/jwt/jwt.provider';
 import { BooksRepository } from '@/app/interfaces/repositories/books.repository';
 import { PrismaBooksRepository } from '@/infra/repositories/prisma/prisma-books.repository';
+import { UpdateBookController } from '@/presentation/http/controllers/books/update-book/update-book.controller';
+import { UpdateBookService } from '@/app/services/books/update-book/update-book.service';
 
 @Module({
   providers: [
@@ -24,11 +26,13 @@ import { PrismaBooksRepository } from '@/infra/repositories/prisma/prisma-books.
       useClass: JwtProviderImpl,
     },
     CreateBookService,
+    UpdateBookService,
     GetPaginatedBooksService,
     DeleteBookService,
   ],
   controllers: [
     CreateBookController,
+    UpdateBookController,
     GetPaginatedBooksController,
     DeleteBookController
   ],

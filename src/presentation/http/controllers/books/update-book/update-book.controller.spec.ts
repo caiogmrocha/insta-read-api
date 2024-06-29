@@ -8,6 +8,7 @@ import { UpdateBookBodyDto, UpdateBookParamsDto } from './update-book.dto';
 import { UpdateBookService } from '@/app/services/books/update-book/update-book.service';
 import { BooksRepository } from '@/app/interfaces/repositories/books.repository';
 import { Book } from '@/domain/entities/book';
+import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
 
 describe('UpdateBookController', () => {
   let controller: UpdateBookController;
@@ -23,6 +24,10 @@ describe('UpdateBookController', () => {
             getByISBN: jest.fn(),
             update: jest.fn(),
           })),
+        },
+        {
+          provide: JwtProvider,
+          useClass: jest.fn().mockImplementation(() => ({})),
         },
         UpdateBookService,
       ],

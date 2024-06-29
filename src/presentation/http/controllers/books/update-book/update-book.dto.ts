@@ -3,6 +3,7 @@ import { IsDate, IsISBN, IsInt, IsNotEmpty, IsOptional, MaxLength, Min, MinLengt
 import { Transform, Type } from "class-transformer";
 
 export class UpdateBookParamsDto {
+  @Transform(({ value }) => parseInt(value))
   @IsInt()
   @IsNotEmpty()
   id: number;
