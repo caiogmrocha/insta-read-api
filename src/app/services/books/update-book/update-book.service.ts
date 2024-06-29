@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { BookNotFoundException } from '../errors/book-not-found.exception';
 import { BookISBNAlreadyExistsException } from '../errors/book-isbn-already-exists.exception';
 
-export type UpdateBookServiceParams = {
+export type UpdateBookServiceParams = Partial<{
   id: number;
   isbn: string;
   title: string;
@@ -14,7 +14,7 @@ export type UpdateBookServiceParams = {
   category: string;
   publisher: string;
   publicationDate: Date;
-};
+}>;
 
 @Injectable()
 export class UpdateBookService {
@@ -36,5 +36,9 @@ export class UpdateBookService {
         throw new BookISBNAlreadyExistsException(params.isbn);
       }
     }
+
+    Object.assign(book, params);
+
+    await this.booksRepository.update(book);
   }
 }
