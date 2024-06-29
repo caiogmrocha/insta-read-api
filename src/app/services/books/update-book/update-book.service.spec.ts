@@ -97,5 +97,39 @@ describe('UpdateBookService', () => {
     await expect(promise).rejects.toThrow(BookISBNAlreadyExistsException);
   });
 
-  it.todo('should update the book');
+  it('should update the book', async () => {
+    // Arrange
+    const params: UpdateBookServiceParams = {
+      id: faker.number.int(),
+      isbn: faker.helpers.replaceSymbols('###-#-##-#####-#'),
+      title: faker.lorem.words(),
+      sinopsis: faker.lorem.paragraph(),
+      pages: faker.number.int(),
+      amount: faker.number.int(),
+      author: faker.person.fullName(),
+      category: faker.lorem.word(),
+      publisher: faker.company.name(),
+      publicationDate: faker.date.recent(),
+    };
+
+    const bookToBeUpdated = new Book(params);
+
+    booksRepository.getById.mockResolvedValue(bookToBeUpdated);
+    booksRepository.getByISBN.mockResolvedValue(null);
+
+    Object.assign(params, {
+      title: faker.lorem.words(),
+      sinopsis: faker.lorem.paragraph(),
+      pages: faker.number.int(),
+      amount: faker.number.int(),
+    });
+
+    // Act
+    await service.execute(params);
+
+    // Assert
+    const bookToBeUpdatedCopy = JSON.parse(JSON.stringify(bookToBeUpdated)); // To prevent reference to the same object in the next line
+
+    expect(new Book(Object.assign(bookToBeUpdatedCopy, params)).equals(booksRepository.update.mock.calls[0][0])).toBeTruthy();
+  });
 });
