@@ -15,6 +15,7 @@ export interface BooksRepository {
   }>;
 
   create(book: Book): Promise<void>;
+  update(book: Book): Promise<void>;
   delete(id: number): Promise<void>;
 }
 
