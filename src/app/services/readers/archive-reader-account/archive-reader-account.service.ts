@@ -20,8 +20,8 @@ export class ArchiveReaderAccountService {
       throw new ReaderNotFoundException('id', params.id);
     }
 
-    if (reader.isArchived) {
-      throw new ReaderAlreadyArchivedException(params.id);
-    }
+    reader.archive();
+
+    await this.readersRepository.update(reader);
   }
 }

@@ -1,3 +1,4 @@
+import { ReaderAlreadyArchivedException } from "@/app/services/readers/errors/reader-already-archived.exception";
 import { User, UserProps } from "./user";
 
 export type ReaderProps = Partial<{
@@ -16,5 +17,14 @@ export class Reader extends User<ReaderProps> implements ReaderProps {
 
     this.isArchived = props.isArchived ?? false;
     this.archivedAt = props.archivedAt;
+  }
+
+  public archive(): void {
+    if (this.isArchived) {
+      throw new ReaderAlreadyArchivedException(this.id);
+    }
+
+    this.isArchived = true;
+    this.archivedAt = new Date();
   }
 };
