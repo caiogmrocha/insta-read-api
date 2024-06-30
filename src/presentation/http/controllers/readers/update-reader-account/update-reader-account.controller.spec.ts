@@ -8,6 +8,7 @@ import { UpdateReaderAccountService } from '@/app/services/readers/update-reader
 import { Reader } from '@/domain/entities/reader';
 import { ReadersRepository } from '@/app/interfaces/repositories/reader.repository';
 import { UpdateReaderAccountBodyDto, UpdateReaderAccountParamsDto } from './update-reader-account.dto';
+import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
 
 describe('UpdateReaderAccountController', () => {
   let controller: UpdateReaderAccountController;
@@ -23,6 +24,10 @@ describe('UpdateReaderAccountController', () => {
             getByEmail: jest.fn(),
             update: jest.fn(),
           })),
+        },
+        {
+          provide: JwtProvider,
+          useClass: jest.fn().mockImplementation(() => ({})),
         },
         UpdateReaderAccountService,
       ],

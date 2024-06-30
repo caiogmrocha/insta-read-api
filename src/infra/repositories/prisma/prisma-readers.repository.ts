@@ -10,12 +10,16 @@ export class PrismaReadersRepository implements ReadersRepository {
     private readonly prismaProvider: PrismaProvider,
   ) {}
 
-  public async getById(id: number): Promise<Reader> {
+  public async getById(id: number): Promise<Reader | null> {
     const readerData = await this.prismaProvider.reader.findFirst({
       where: {
         id,
       },
     });
+
+    if (!readerData) {
+      return null;
+    }
 
     const reader = new Reader({
       id: readerData.id,
