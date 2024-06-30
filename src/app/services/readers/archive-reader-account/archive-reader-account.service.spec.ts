@@ -12,7 +12,7 @@ describe('ArchiveReaderAccountService', () => {
     service = module.get<ArchiveReaderAccountService>(ArchiveReaderAccountService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
+  it.todo('should throw ReaderNotFound exception if reader not found');
+  it.todo('should throw ReaderAlreadyArchived exception if reader already archived');
+  it.todo('should archive reader account');
 });
