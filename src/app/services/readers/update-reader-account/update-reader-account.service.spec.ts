@@ -83,5 +83,29 @@ describe('UpdateReaderAccountService', () => {
     await expect(promise).rejects.toThrow(ReaderEmailAlreadyExistsException);
   });
 
-  it.todo('should update the reader account');
+  it('should update the reader account', async () => {
+    // Arrange
+    const params: UpdateReaderAccountServiceParams = {
+      id: faker.number.int(),
+      name: faker.person.fullName(),
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+    };
+
+    const readerToBeUpdated = new Reader({
+      id: params.id,
+      name: params.name,
+      email: params.email,
+      password: params.password,
+    });
+
+    readersRepository.getById.mockResolvedValue(readerToBeUpdated);
+    readersRepository.getByEmail.mockResolvedValue(null);
+
+    // Act
+    await service.execute(params);
+
+    // Assert
+    expect(readersRepository.update).toHaveBeenCalledWith(readerToBeUpdated);
+  });
 });
