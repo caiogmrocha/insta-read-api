@@ -8,7 +8,7 @@ export type UserProps = Partial<{
   password: string;
 }> & Partial<EntityProps>;
 
-export abstract class User extends Entity<UserProps> implements UserProps {
+export abstract class User<P extends UserProps = UserProps> extends Entity<P> implements UserProps {
   public id: number;
   public name: string;
   public email: string;
@@ -19,7 +19,7 @@ export abstract class User extends Entity<UserProps> implements UserProps {
   public deletedAt?: Date;
   public deleted: boolean;
 
-  constructor(props: UserProps) {
+  constructor(props: P) {
     super(props);
   }
 }

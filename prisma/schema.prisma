@@ -8,14 +8,16 @@ datasource db {
 }
 
 model Reader {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  name      String?
-  password  String
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-  deleted   Boolean   @default(false)
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
+  name       String?
+  password   String
+  archived   Boolean   @default(false)
+  archivedAt DateTime? @map("archived_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+  deleted    Boolean   @default(false)
 
   @@map("readers")
 }
