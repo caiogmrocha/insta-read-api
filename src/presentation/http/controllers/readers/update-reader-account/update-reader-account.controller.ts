@@ -1,6 +1,6 @@
 import { ReaderNotFoundException } from '@/app/services/readers/errors/reader-not-found.exception';
 import { UpdateReaderAccountService } from '@/app/services/readers/update-reader-account/update-reader-account.service';
-import { Body, ConflictException, Controller, InternalServerErrorException, NotFoundException, Param, Put } from '@nestjs/common';
+import { Body, ConflictException, Controller, HttpCode, HttpStatus, InternalServerErrorException, NotFoundException, Param, Put } from '@nestjs/common';
 import { UpdateReaderAccountBodyDto, UpdateReaderAccountParamsDto } from './update-reader-account.dto';
 import { ReaderEmailAlreadyExistsException } from '@/app/services/readers/errors/reader-email-already-exists.exception';
 
@@ -10,6 +10,7 @@ export class UpdateReaderAccountController {
     private readonly updateReaderAccountService: UpdateReaderAccountService,
   ) {}
 
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Put('/api/readers/:id')
   public async handle(
     @Param() params: UpdateReaderAccountParamsDto,
