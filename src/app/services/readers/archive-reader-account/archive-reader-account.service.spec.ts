@@ -4,6 +4,8 @@ import { ArchiveReaderAccountService } from './archive-reader-account.service';
 import { ReadersRepository } from '@/app/interfaces/repositories/reader.repository';
 import { faker } from '@faker-js/faker';
 import { ReaderNotFoundException } from '../errors/reader-not-found.exception';
+import { Reader } from '@/domain/entities/reader';
+import { ReaderAlreadyArchivedException } from '../errors/reader-already-archived.exception';
 
 describe('ArchiveReaderAccountService', () => {
   let service: ArchiveReaderAccountService;
@@ -42,6 +44,26 @@ describe('ArchiveReaderAccountService', () => {
     await expect(promise).rejects.toThrow(ReaderNotFoundException);
   });
 
-  it.todo('should throw ReaderAlreadyArchived exception if reader already archived');
+  it('should throw ReaderAlreadyArchived exception if reader already archived', async () => {
+    // Arrange
+    const params = {
+      id: faker.number.int(),
+    };
+
+    const reader = new Reader({
+      id: params.id,
+      isArchived: true,
+      archivedAt: faker.date.recent(),
+    });
+
+    readersRepository.getById.mockResolvedValue(reader);
+
+    // Act
+    const promise = service.execute(params);
+
+    // Assert
+    await expect(promise).rejects.toThrow(ReaderAlreadyArchivedException);
+  });
+
   it.todo('should archive reader account');
 });
