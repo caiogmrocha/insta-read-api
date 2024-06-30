@@ -4,7 +4,7 @@ import { ReadersRepository } from '@/app/interfaces/repositories/reader.reposito
 import { ArchiveReaderAccountService } from '@/app/services/readers/archive-reader-account/archive-reader-account.service';
 import { ArchiveReaderAccountParamsDto } from './archive-reader-account.dto';
 import { Reader } from '@/domain/entities/reader';
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 
 describe('ArchiveReaderAccountController', () => {
   let controller: ArchiveReaderAccountController;
@@ -29,6 +29,21 @@ describe('ArchiveReaderAccountController', () => {
     readersRepository = module.get<jest.Mocked<ReadersRepository>>(ReadersRepository);
   });
 
+  it('should response 404 if reader not found', async () => {
+    // Arrange
+    const params: ArchiveReaderAccountParamsDto = {
+      id: 1,
+    };
+
+    readersRepository.getById.mockResolvedValue(null);
+
+    // Act
+    const promise = controller.handle(params);
+
+    // Assert
+    await expect(promise).rejects.toThrow(NotFoundException);
+  });
+
   it('should response 409 if reader already archived', async () => {
     // Arrange
     const params: ArchiveReaderAccountParamsDto = {
@@ -50,6 +65,5 @@ describe('ArchiveReaderAccountController', () => {
     await expect(promise).rejects.toThrow(ConflictException);
   });
 
-  it.todo('should response 404 if reader not found');
   it.todo('should response 204 if reader archived successfully');
 });
