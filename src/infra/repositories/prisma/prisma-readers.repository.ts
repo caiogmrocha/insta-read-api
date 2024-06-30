@@ -10,6 +10,27 @@ export class PrismaReadersRepository implements ReadersRepository {
     private readonly prismaProvider: PrismaProvider,
   ) {}
 
+  public async getById(id: number): Promise<Reader> {
+    const readerData = await this.prismaProvider.reader.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    const reader = new Reader({
+      id: readerData.id,
+      name: readerData.name,
+      email: readerData.email,
+      password: readerData.password,
+      createdAt: readerData.createdAt,
+      updatedAt: readerData.updatedAt,
+      deletedAt: readerData.deletedAt,
+      deleted: readerData.deleted,
+    });
+
+    return reader;
+  }
+
   public async getByEmail(email: string): Promise<Reader | null> {
     const readerData = await this.prismaProvider.reader.findFirst({
       where: {
@@ -33,6 +54,19 @@ export class PrismaReadersRepository implements ReadersRepository {
 
   public async create(params: Reader): Promise<void> {
     await this.prismaProvider.reader.create({
+      data: {
+        email: params.email,
+        name: params.name,
+        password: params.password,
+      },
+    });
+  }
+
+  public async update(params: Reader): Promise<void> {
+    await this.prismaProvider.reader.update({
+      where: {
+        id: params.id,
+      },
       data: {
         email: params.email,
         name: params.name,
