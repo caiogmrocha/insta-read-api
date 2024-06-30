@@ -1,10 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { ArchiveReaderAccountService } from './archive-reader-account.service';
-import { ReadersRepository } from '@/app/interfaces/repositories/reader.repository';
 import { faker } from '@faker-js/faker';
-import { ReaderNotFoundException } from '../errors/reader-not-found.exception';
+
+import { ArchiveReaderAccountService, ArchiveReaderAccountServiceParams } from './archive-reader-account.service';
+import { ReadersRepository } from '@/app/interfaces/repositories/reader.repository';
 import { Reader } from '@/domain/entities/reader';
+import { ReaderNotFoundException } from '../errors/reader-not-found.exception';
 import { ReaderAlreadyArchivedException } from '../errors/reader-already-archived.exception';
 
 describe('ArchiveReaderAccountService', () => {
@@ -31,7 +32,7 @@ describe('ArchiveReaderAccountService', () => {
 
   it('should throw ReaderNotFound exception if reader not found', async () => {
     // Arrange
-    const params = {
+    const params: ArchiveReaderAccountServiceParams = {
       id: faker.number.int(),
     };
 
@@ -46,7 +47,7 @@ describe('ArchiveReaderAccountService', () => {
 
   it('should throw ReaderAlreadyArchived exception if reader already archived', async () => {
     // Arrange
-    const params = {
+    const params: ArchiveReaderAccountServiceParams = {
       id: faker.number.int(),
     };
 
@@ -67,7 +68,7 @@ describe('ArchiveReaderAccountService', () => {
 
   it('should archive reader account', async () => {
     // Arrange
-    const params = {
+    const params: ArchiveReaderAccountServiceParams = {
       id: faker.number.int(),
     };
 
