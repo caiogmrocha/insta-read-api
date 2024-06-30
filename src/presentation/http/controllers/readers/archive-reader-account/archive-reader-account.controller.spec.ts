@@ -65,5 +65,23 @@ describe('ArchiveReaderAccountController', () => {
     await expect(promise).rejects.toThrow(ConflictException);
   });
 
-  it.todo('should response 204 if reader archived successfully');
+  it('should response 204 if reader archived successfully', async () => {
+    // Arrange
+    const params: ArchiveReaderAccountParamsDto = {
+      id: 1,
+    };
+
+    const reader = new Reader({
+      id: params.id,
+      isArchived: false,
+    });
+
+    readersRepository.getById.mockResolvedValue(reader);
+
+    // Act
+    const result = await controller.handle(params);
+
+    // Assert
+    expect(result).toBeUndefined();
+  });
 });
