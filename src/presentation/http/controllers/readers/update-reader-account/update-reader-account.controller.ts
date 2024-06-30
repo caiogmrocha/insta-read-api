@@ -1,7 +1,8 @@
 import { ReaderNotFoundException } from '@/app/services/readers/errors/reader-not-found.exception';
 import { UpdateReaderAccountService } from '@/app/services/readers/update-reader-account/update-reader-account.service';
-import { Body, Controller, InternalServerErrorException, NotFoundException, Param, Put } from '@nestjs/common';
+import { Body, ConflictException, Controller, InternalServerErrorException, NotFoundException, Param, Put } from '@nestjs/common';
 import { UpdateReaderAccountBodyDto, UpdateReaderAccountParamsDto } from './update-reader-account.dto';
+import { ReaderEmailAlreadyExistsException } from '@/app/services/readers/errors/reader-email-already-exists.exception';
 
 @Controller()
 export class UpdateReaderAccountController {
@@ -23,6 +24,10 @@ export class UpdateReaderAccountController {
       switch (error.constructor) {
         case ReaderNotFoundException: {
           throw new NotFoundException('Reader not found');
+        };
+
+        case ReaderEmailAlreadyExistsException: {
+          throw new ConflictException(error.message);
         };
 
         default: {
