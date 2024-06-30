@@ -1,8 +1,9 @@
-import { ConflictException, Controller, HttpCode, InternalServerErrorException, Param, Patch } from '@nestjs/common';
+import { ConflictException, Controller, HttpCode, InternalServerErrorException, NotFoundException, Param, Patch } from '@nestjs/common';
 
 import { ArchiveReaderAccountParamsDto } from './archive-reader-account.dto';
 import { ArchiveReaderAccountService } from '@/app/services/readers/archive-reader-account/archive-reader-account.service';
 import { ReaderAlreadyArchivedException } from '@/app/services/readers/errors/reader-already-archived.exception';
+import { ReaderNotFoundException } from '@/app/services/readers/errors/reader-not-found.exception';
 
 @Controller()
 export class ArchiveReaderAccountController {
@@ -17,8 +18,12 @@ export class ArchiveReaderAccountController {
       await this.archiveReaderAccountService.execute(params);
     } catch (error) {
       switch (error.constructor) {
+        case ReaderNotFoundException: {
+          throw new NotFoundException(error.message);
+        };
+
         case ReaderAlreadyArchivedException: {
-          throw new ConflictException();
+          throw new ConflictException(error.message);
         };
 
         default: {
