@@ -13,6 +13,8 @@ import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
 import { JwtProviderImpl } from '@/infra/auth/jwt/jwt.provider';
 import { UpdateReaderAccountService } from '@/app/services/readers/update-reader-account/update-reader-account.service';
 import { UpdateReaderAccountController } from '@/presentation/http/controllers/readers/update-reader-account/update-reader-account.controller';
+import { ArchiveReaderAccountService } from '@/app/services/readers/archive-reader-account/archive-reader-account.service';
+import { ArchiveReaderAccountController } from '@/presentation/http/controllers/readers/archive-reader-account/archive-reader-account.controller';
 
 @Module({
   providers: [
@@ -32,11 +34,13 @@ import { UpdateReaderAccountController } from '@/presentation/http/controllers/r
     CreateReaderAccountService,
     AuthenticateReaderService,
     UpdateReaderAccountService,
+    ArchiveReaderAccountService,
   ],
   controllers: [
     CreateReaderAccountController,
     AuthenticateReaderController,
     UpdateReaderAccountController,
+    ArchiveReaderAccountController,
   ],
 })
 export class ReadersModule {}

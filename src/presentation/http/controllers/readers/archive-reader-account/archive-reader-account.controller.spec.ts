@@ -5,6 +5,7 @@ import { ArchiveReaderAccountService } from '@/app/services/readers/archive-read
 import { ArchiveReaderAccountParamsDto } from './archive-reader-account.dto';
 import { Reader } from '@/domain/entities/reader';
 import { ConflictException, NotFoundException } from '@nestjs/common';
+import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
 
 describe('ArchiveReaderAccountController', () => {
   let controller: ArchiveReaderAccountController;
@@ -19,6 +20,10 @@ describe('ArchiveReaderAccountController', () => {
             getById: jest.fn(),
             update: jest.fn(),
           })),
+        },
+        {
+          provide: JwtProvider,
+          useClass: jest.fn().mockImplementation(() => ({})),
         },
         ArchiveReaderAccountService,
       ],

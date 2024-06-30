@@ -26,6 +26,8 @@ export class PrismaReadersRepository implements ReadersRepository {
       name: readerData.name,
       email: readerData.email,
       password: readerData.password,
+      isArchived: readerData.archived,
+      archivedAt: readerData.archivedAt,
       createdAt: readerData.createdAt,
       updatedAt: readerData.updatedAt,
       deletedAt: readerData.deletedAt,
@@ -47,6 +49,8 @@ export class PrismaReadersRepository implements ReadersRepository {
       name: readerData.name,
       email: readerData.email,
       password: readerData.password,
+      isArchived: readerData.archived,
+      archivedAt: readerData.archivedAt,
       createdAt: readerData.createdAt,
       updatedAt: readerData.updatedAt,
       deletedAt: readerData.deletedAt,
@@ -75,6 +79,8 @@ export class PrismaReadersRepository implements ReadersRepository {
         email: params.email,
         name: params.name,
         password: params.password,
+        archived: params.isArchived,
+        archivedAt: params.archivedAt,
       },
     });
   }
