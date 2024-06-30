@@ -1,11 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UpdateReaderAccountController } from './update-reader-account.controller';
-import { ReadersRepository } from '@/app/interfaces/repositories/reader.repository';
-import { UpdateReaderAccountService } from '@/app/services/readers/update-reader-account/update-reader-account.service';
 import { ConflictException, NotFoundException } from '@nestjs/common';
+
 import { faker } from '@faker-js/faker';
-import { UpdateReaderAccountBodyDto, UpdateReaderAccountParamsDto } from './update-reader-account.dto';
+
+import { UpdateReaderAccountController } from './update-reader-account.controller';
+import { UpdateReaderAccountService } from '@/app/services/readers/update-reader-account/update-reader-account.service';
 import { Reader } from '@/domain/entities/reader';
+import { ReadersRepository } from '@/app/interfaces/repositories/reader.repository';
+import { UpdateReaderAccountBodyDto, UpdateReaderAccountParamsDto } from './update-reader-account.dto';
 
 describe('UpdateReaderAccountController', () => {
   let controller: UpdateReaderAccountController;
@@ -91,5 +93,33 @@ describe('UpdateReaderAccountController', () => {
     await expect(promise).rejects.toThrow(ConflictException);
 
   });
-  it.todo('should response with 204 when reader updated');
+
+  it('should response with 204 when reader updated', async () => {
+    // Arrange
+    const params: UpdateReaderAccountParamsDto = {
+      id: faker.number.int(),
+    };
+
+    const body: UpdateReaderAccountBodyDto = {
+      name: faker.person.fullName(),
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+    };
+
+    const readerToBeUpdated = new Reader({
+      id: params.id,
+      name: body.name,
+      email: body.email,
+      password: body.password,
+    });
+
+    readersRepository.getById.mockResolvedValue(readerToBeUpdated);
+    readersRepository.getByEmail.mockResolvedValue(null);
+
+    // Act
+    const promise = controller.handle(params, body);
+
+    // Assert
+    await expect(promise).resolves.toBeUndefined();
+  });
 });
