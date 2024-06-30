@@ -65,5 +65,23 @@ describe('ArchiveReaderAccountService', () => {
     await expect(promise).rejects.toThrow(ReaderAlreadyArchivedException);
   });
 
-  it.todo('should archive reader account');
+  it('should archive reader account', async () => {
+    // Arrange
+    const params = {
+      id: faker.number.int(),
+    };
+
+    const reader = new Reader({
+      id: params.id,
+      isArchived: false,
+    });
+
+    readersRepository.getById.mockResolvedValue(reader);
+
+    // Act
+    await service.execute(params);
+
+    // Assert
+    expect(reader.isArchived).toBe(true);
+  });
 });
