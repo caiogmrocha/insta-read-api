@@ -1,9 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
+
 import { DeleteBookController } from './delete-book.controller';
 import { BooksRepository } from '@/app/interfaces/repositories/books.repository';
 import { DeleteBookService } from '@/app/services/books/delete-book/delete-book.service';
 import { Book } from '@/domain/entities/book';
-import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
 
 describe('DeleteBookController', () => {

@@ -1,4 +1,4 @@
-import { Body, ConflictException, Controller, InternalServerErrorException, NotFoundException, Param, Put, UseGuards } from '@nestjs/common';
+import { Body, ConflictException, Controller, HttpCode, HttpStatus, InternalServerErrorException, NotFoundException, Param, Put, UseGuards } from '@nestjs/common';
 
 import { UpdateBookBodyDto, UpdateBookParamsDto } from './update-book.dto';
 import { UpdateBookService } from '@/app/services/books/update-book/update-book.service';
@@ -14,6 +14,7 @@ export class UpdateBookController {
   ) {}
 
   @UseGuards(AuthJwtGuard, AuthAdminGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Put('/api/books/:id')
   public async handle(
     @Param() params: UpdateBookParamsDto,

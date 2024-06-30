@@ -1,6 +1,7 @@
+import { Controller, Delete, HttpCode, HttpStatus, InternalServerErrorException, NotFoundException, Param, UseGuards } from '@nestjs/common';
+
 import { DeleteBookService } from '@/app/services/books/delete-book/delete-book.service';
 import { BookNotFoundException } from '@/app/services/books/errors/book-not-found.exception';
-import { Controller, Delete, InternalServerErrorException, NotFoundException, Param, UseGuards } from '@nestjs/common';
 import { DeleteBookDto } from './delete-book.dto';
 import { AuthJwtGuard } from '@/infra/guards/auth-jwt.guard';
 import { AuthAdminGuard } from '@/infra/guards/auth-admin.guard';
@@ -12,6 +13,7 @@ export class DeleteBookController {
   ) {}
 
   @UseGuards(AuthJwtGuard, AuthAdminGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/api/books/:id')
   public async handle(@Param() params: DeleteBookDto): Promise<void> {
     try {

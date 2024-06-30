@@ -11,6 +11,8 @@ import { AuthenticateReaderService } from '@/app/services/readers/authenticate-r
 import { AuthenticateReaderController } from '@/presentation/http/controllers/readers/authenticate-reader/authenticate-reader.controller';
 import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
 import { JwtProviderImpl } from '@/infra/auth/jwt/jwt.provider';
+import { UpdateReaderAccountService } from '@/app/services/readers/update-reader-account/update-reader-account.service';
+import { UpdateReaderAccountController } from '@/presentation/http/controllers/readers/update-reader-account/update-reader-account.controller';
 
 @Module({
   providers: [
@@ -29,10 +31,12 @@ import { JwtProviderImpl } from '@/infra/auth/jwt/jwt.provider';
     },
     CreateReaderAccountService,
     AuthenticateReaderService,
+    UpdateReaderAccountService,
   ],
   controllers: [
     CreateReaderAccountController,
     AuthenticateReaderController,
+    UpdateReaderAccountController,
   ],
 })
 export class ReadersModule {}
