@@ -11,3 +11,12 @@ services:
       - ./docker/volumes/mysql:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=password
+
+  insta-read-redis:
+    image: redis:7.2-alpine
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./docker/volumes/redis:/data
