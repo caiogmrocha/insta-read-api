@@ -8,6 +8,8 @@ import { BooksRepository } from '@/app/interfaces/repositories/books.repository'
 import { ReadersRepository } from '@/app/interfaces/repositories/reader.repository';
 import { BookNotFoundException } from '../../books/errors/book-not-found.exception';
 import { ReaderNotFoundException } from '../../readers/errors/reader-not-found.exception';
+import { Reader } from '@/domain/entities/reader';
+import { ReaderAccountDeactivatedException } from '../../readers/errors/reader-account-deactivated.exception';
 
 describe('BookLoanProcessor', () => {
   let service: BookLoanProcessor;
@@ -75,6 +77,32 @@ describe('BookLoanProcessor', () => {
     await expect(promise).rejects.toThrow(ReaderNotFoundException);
   });
 
-  it.todo('should throw ReaderAccountDeactivatedException when reader account is deactivated');
+  it('should throw ReaderAccountDeactivatedException when reader account is deactivated', async () => {
+    // Arrange
+    const params = {
+      data: {
+        readerId: faker.number.int(),
+        bookId: faker.number.int(),
+      },
+    } as Job<BookLoanParams>;
+
+    booksRepository.getById.mockResolvedValue({} as any);
+
+    const reader = new Reader({
+      id: params.data.readerId,
+      name: faker.person.fullName(),
+      email: faker.internet.email(),
+      isArchived: true,
+    });
+
+    readersRepository.getById.mockResolvedValue(reader);
+
+    // Act
+    const promise = service.process(params);
+
+    // Assert
+    await expect(promise).rejects.toThrow(ReaderAccountDeactivatedException);
+  });
+
   it.todo('should notify reader when book loan request is successful');
 });
