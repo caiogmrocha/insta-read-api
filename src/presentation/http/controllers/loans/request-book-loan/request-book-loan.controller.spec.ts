@@ -11,6 +11,8 @@ import { ReadersRepository } from '@/app/interfaces/repositories/reader.reposito
 import { RequestBookLoanService } from '@/app/services/loans/request-book-loan/request-book-loan.service';
 import { Book } from '@/domain/entities/book';
 import { Reader } from '@/domain/entities/reader';
+import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
+import { Request } from 'express';
 
 describe('RequestBookLoanController', () => {
   let controller: RequestBookLoanController;
@@ -41,6 +43,10 @@ describe('RequestBookLoanController', () => {
             getJob: jest.fn(),
           })),
         },
+        {
+          provide: JwtProvider,
+          useClass: jest.fn().mockImplementation(() => ({})),
+        },
         RequestBookLoanService,
       ],
       controllers: [RequestBookLoanController],
@@ -55,6 +61,12 @@ describe('RequestBookLoanController', () => {
 
   it('should response with 404 status code when book is not found', async () => {
     // Arrange
+    const request = {
+      user: {
+        id: faker.number.int(),
+      }
+    } as Request;
+
     const body = {
       readerId: faker.number.int(),
       bookId: faker.number.int(),
@@ -63,7 +75,7 @@ describe('RequestBookLoanController', () => {
     booksRepository.getById.mockResolvedValue(null);
 
     // Act
-    const promise = controller.handle(body);
+    const promise = controller.handle(request, body);
 
     // Assert
     await expect(promise).rejects.toThrow(NotFoundException);
@@ -71,6 +83,12 @@ describe('RequestBookLoanController', () => {
 
   it('should response with 404 status code when reader is not found', async () => {
     // Arrange
+    const request = {
+      user: {
+        id: faker.number.int(),
+      }
+    } as Request;
+
     const body = {
       readerId: faker.number.int(),
       bookId: faker.number.int(),
@@ -85,7 +103,7 @@ describe('RequestBookLoanController', () => {
     readersRepository.getById.mockResolvedValue(null);
 
     // Act
-    const promise = controller.handle(body);
+    const promise = controller.handle(request, body);
 
     // Assert
     await expect(promise).rejects.toThrow(NotFoundException);
@@ -93,6 +111,12 @@ describe('RequestBookLoanController', () => {
 
   it('should response with 409 status code when book loan request already exists', async () => {
     // Arrange
+        const request = {
+      user: {
+        id: faker.number.int(),
+      }
+    } as Request;
+
     const body = {
       readerId: faker.number.int(),
       bookId: faker.number.int(),
@@ -113,7 +137,7 @@ describe('RequestBookLoanController', () => {
     bookLoanQueueProducer.getJob.mockResolvedValue(<any>{});
 
     // Act
-    const promise = controller.handle(body);
+    const promise = controller.handle(request, body);
 
     // Assert
     await expect(promise).rejects.toThrow(ConflictException);
@@ -121,6 +145,12 @@ describe('RequestBookLoanController', () => {
 
   it('should response with 201 status code when request book loan is successful', async () => {
     // Arrange
+        const request = {
+      user: {
+        id: faker.number.int(),
+      }
+    } as Request;
+
     const body = {
       readerId: faker.number.int(),
       bookId: faker.number.int(),
@@ -143,7 +173,7 @@ describe('RequestBookLoanController', () => {
     jest.spyOn(service, 'execute');
 
     // Act
-    const promise = controller.handle(body);
+    const promise = controller.handle(request, body);
 
     // Assert
     await expect(promise).resolves.toBeUndefined();

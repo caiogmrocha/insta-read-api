@@ -6,11 +6,5 @@ export class RequestBookLoanBodyDto {
   @Transform(({ value }) => parseInt(value))
   @IsInt()
   @IsPositive()
-  readerId: number;
-
-  @IsNotEmpty()
-  @Transform(({ value }) => parseInt(value))
-  @IsInt()
-  @IsPositive()
   bookId: number;
 }

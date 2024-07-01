@@ -21,6 +21,7 @@ export class PrismaBooksRepository implements BooksRepository {
     }
 
     return new Book({
+      id: book.id,
       isbn: book.isbn,
       title: book.title,
       sinopsis: book.sinopsis,
@@ -49,6 +50,7 @@ export class PrismaBooksRepository implements BooksRepository {
     }
 
     return new Book({
+      id: book.id,
       isbn: book.isbn,
       title: book.title,
       sinopsis: book.sinopsis,
