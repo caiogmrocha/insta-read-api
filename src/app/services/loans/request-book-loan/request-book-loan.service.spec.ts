@@ -1,16 +1,22 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { RequestBookLoanParams, RequestBookLoanService } from './request-book-loan.service';
+import { getQueueToken } from '@nestjs/bullmq';
+
 import { faker } from '@faker-js/faker';
-import { BookNotFoundException } from '../../books/errors/book-not-found.exception';
+import { Queue } from 'bullmq';
+
+import { RequestBookLoanParams, RequestBookLoanService } from './request-book-loan.service';
 import { BooksRepository } from '@/app/interfaces/repositories/books.repository';
 import { ReadersRepository } from '@/app/interfaces/repositories/reader.repository';
-import { Book } from '@/domain/entities/book';
 import { ReaderNotFoundException } from '../../readers/errors/reader-not-found.exception';
+import { BookNotFoundException } from '../../books/errors/book-not-found.exception';
+import { Book } from '@/domain/entities/book';
+import { Reader } from '@/domain/entities/reader';
 
 describe('RequestBookLoanService', () => {
   let service: RequestBookLoanService;
   let booksRepository: jest.Mocked<BooksRepository>;
   let readersRepository: jest.Mocked<ReadersRepository>;
+  let bookLoanQueueProducer: jest.Mocked<Queue>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,13 +33,20 @@ describe('RequestBookLoanService', () => {
             getById: jest.fn(),
           })),
         },
+        {
+          provide: getQueueToken('book-loan'),
+          useClass: jest.fn().mockImplementation(() => ({
+            add: jest.fn(),
+          })),
+        },
         RequestBookLoanService,
       ],
     }).compile();
 
     service = module.get<RequestBookLoanService>(RequestBookLoanService);
-    booksRepository = module.get(BooksRepository);
-    readersRepository = module.get(ReadersRepository);
+    booksRepository = module.get<jest.Mocked<BooksRepository>>(BooksRepository);
+    readersRepository = module.get<jest.Mocked<ReadersRepository>>(ReadersRepository);
+    bookLoanQueueProducer = module.get<jest.Mocked<Queue>>(getQueueToken('book-loan'));
   });
 
   it('should throw BookNotFoundException when book is not found', async () => {
@@ -75,5 +88,33 @@ describe('RequestBookLoanService', () => {
   });
 
   it.todo('should throw ReaderNotActiveException when reader is not active'); // This test is not necessary
-  it.todo('should enqueue loan request');
+
+  it('should enqueue loan request', async () => {
+    // Arrange
+    const params: RequestBookLoanParams = {
+      readerId: faker.number.int(),
+      bookId: faker.number.int(),
+    };
+
+    const book = new Book({
+      id: params.bookId,
+      title: faker.lorem.words(),
+    });
+
+    const reader = new Reader({
+      id: params.readerId,
+      name: faker.person.fullName(),
+      archivedAt: null,
+      isArchived: false,
+    });
+
+    booksRepository.getById.mockResolvedValue(book);
+    readersRepository.getById.mockResolvedValue(reader);
+
+    // Act
+    await service.execute(params);
+
+    // Assert
+    expect(bookLoanQueueProducer.add).toHaveBeenCalled();
+  });
 });
