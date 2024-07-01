@@ -8,6 +8,7 @@ import { ReadersRepository } from '@/app/interfaces/repositories/reader.reposito
 import { BookNotFoundException } from '../../books/errors/book-not-found.exception';
 import { ReaderNotFoundException } from '../../readers/errors/reader-not-found.exception';
 import { BookLoanRequestAlreadyExistsException } from '../errors/book-loan-request-already-exists.exception';
+import { EXPECTED_LOAN_RETURN_DAYS } from '@/domain/entities/loan';
 
 export type RequestBookLoanParams = {
   readerId: number;
@@ -48,10 +49,10 @@ export class RequestBookLoanService {
       jobId: `${reader.id}-${book.id}`,
       removeOnComplete: true,
       removeOnFail: false,
-      attempts: 3,
+      attempts: EXPECTED_LOAN_RETURN_DAYS * 3,
       backoff: {
         type: 'fixed',
-        delay: 1000 * 60 * 60 * 5,
+        delay: Math.floor((1000 * 60 * 60 * 24) / 3),
       },
     });
   }

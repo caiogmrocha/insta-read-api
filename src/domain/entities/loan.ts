@@ -2,11 +2,14 @@ import { Book } from "./book";
 import { Entity, EntityProps } from "./entity";
 import { Reader } from "./reader";
 
+export const EXPECTED_LOAN_RETURN_DAYS = 15;
+
 export type LoanProps = Partial<{
   id: number;
   readerId: number;
   bookId: number;
   loanAt: Date;
+  expectedReturnAt: Date;
   returnedAt: Date;
   status: 'returned' | 'borrowed' | 'overdue' | 'requested';
 
@@ -19,6 +22,7 @@ export class Loan extends Entity<LoanProps> implements LoanProps {
   public readerId: number;
   public bookId: number;
   public loanAt: Date;
+  public expectedReturnAt: Date;
   public returnedAt: Date;
   public status: LoanProps['status'];
 

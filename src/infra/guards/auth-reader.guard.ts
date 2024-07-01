@@ -3,6 +3,7 @@ import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@
 import { Request } from "express";
 
 import { User } from "@/domain/entities/user";
+import { Reader } from "@/domain/entities/reader";
 
 @Injectable()
 export class AuthReaderGuard implements CanActivate {
@@ -15,6 +16,10 @@ export class AuthReaderGuard implements CanActivate {
 
     if (user.type !== "reader") {
       throw new ForbiddenException('Only readers can access this route.');
+    }
+
+    if (user instanceof Reader && user.isArchived) {
+      throw new ForbiddenException('Only active readers can access this route.');
     }
 
     return true;
