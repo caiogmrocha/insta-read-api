@@ -7,6 +7,7 @@ import { BooksRepository } from '@/app/interfaces/repositories/books.repository'
 import { ReadersRepository } from '@/app/interfaces/repositories/reader.repository';
 import { BookNotFoundException } from '../../books/errors/book-not-found.exception';
 import { ReaderNotFoundException } from '../../readers/errors/reader-not-found.exception';
+import { ReaderAccountDeactivatedException } from '../../readers/errors/reader-account-deactivated.exception';
 
 export type BookLoanParams = {
   readerId: number;
@@ -33,6 +34,10 @@ export class BookLoanProcessor extends WorkerHost {
 
     if (!reader) {
       throw new ReaderNotFoundException('id', readerId);
+    }
+
+    if (reader.isArchived) {
+      throw new ReaderAccountDeactivatedException('id', reader.id);
     }
   }
 }
