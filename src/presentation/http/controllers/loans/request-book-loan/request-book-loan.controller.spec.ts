@@ -14,6 +14,7 @@ import { Reader } from '@/domain/entities/reader';
 
 describe('RequestBookLoanController', () => {
   let controller: RequestBookLoanController;
+  let service: RequestBookLoanService;
   let booksRepository: jest.Mocked<BooksRepository>;
   let readersRepository: jest.Mocked<ReadersRepository>;
   let bookLoanQueueProducer: jest.Mocked<Queue>;
@@ -46,6 +47,7 @@ describe('RequestBookLoanController', () => {
     }).compile();
 
     controller = module.get<RequestBookLoanController>(RequestBookLoanController);
+    service = module.get<RequestBookLoanService>(RequestBookLoanService);
     booksRepository = module.get<jest.Mocked<BooksRepository>>(BooksRepository);
     readersRepository = module.get<jest.Mocked<ReadersRepository>>(ReadersRepository);
     bookLoanQueueProducer = module.get<jest.Mocked<Queue>>(getQueueToken('book-loan'));
@@ -117,5 +119,34 @@ describe('RequestBookLoanController', () => {
     await expect(promise).rejects.toThrow(ConflictException);
   });
 
-  it.todo('should response with 201 status code when request book loan is successful');
+  it('should response with 201 status code when request book loan is successful', async () => {
+    // Arrange
+    const body = {
+      readerId: faker.number.int(),
+      bookId: faker.number.int(),
+    };
+
+    const book = new Book({
+      id: faker.number.int(),
+      title: faker.lorem.words(),
+    });
+
+    const reader = new Reader({
+      id: faker.number.int(),
+      name: faker.person.fullName(),
+    });
+
+    booksRepository.getById.mockResolvedValue(book);
+    readersRepository.getById.mockResolvedValue(reader);
+    bookLoanQueueProducer.getJob.mockResolvedValue(null);
+
+    jest.spyOn(service, 'execute');
+
+    // Act
+    const promise = controller.handle(body);
+
+    // Assert
+    await expect(promise).resolves.toBeUndefined();
+    expect(service.execute).toHaveBeenCalled();
+  });
 });
