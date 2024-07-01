@@ -11,6 +11,7 @@ import { ReaderNotFoundException } from '../../readers/errors/reader-not-found.e
 import { BookNotFoundException } from '../../books/errors/book-not-found.exception';
 import { Book } from '@/domain/entities/book';
 import { Reader } from '@/domain/entities/reader';
+import { BookLoanRequestAlreadyExistsException } from '../errors/book-loan-request-already-exists.exception';
 
 describe('RequestBookLoanService', () => {
   let service: RequestBookLoanService;
@@ -37,6 +38,7 @@ describe('RequestBookLoanService', () => {
           provide: getQueueToken('book-loan'),
           useClass: jest.fn().mockImplementation(() => ({
             add: jest.fn(),
+            getJob: jest.fn(),
           })),
         },
         RequestBookLoanService,
@@ -85,6 +87,36 @@ describe('RequestBookLoanService', () => {
 
     // Assert
     await expect(promise).rejects.toThrow(ReaderNotFoundException);
+  });
+
+  it('should throw BookLoanRequestAlreadyExistsException when loan request already exists', async () => {
+    // Arrange
+    const params: RequestBookLoanParams = {
+      readerId: faker.number.int(),
+      bookId: faker.number.int(),
+    };
+
+    const book = new Book({
+      id: params.bookId,
+      title: faker.lorem.words(),
+    });
+
+    const reader = new Reader({
+      id: params.readerId,
+      name: faker.person.fullName(),
+      archivedAt: null,
+      isArchived: false,
+    });
+
+    booksRepository.getById.mockResolvedValue(book);
+    readersRepository.getById.mockResolvedValue(reader);
+    bookLoanQueueProducer.getJob.mockResolvedValue(<any>{});
+
+    // Act
+    const promise = service.execute(params);
+
+    // Assert
+    await expect(promise).rejects.toThrow(BookLoanRequestAlreadyExistsException);
   });
 
   it.todo('should throw ReaderNotActiveException when reader is not active'); // This test is not necessary
