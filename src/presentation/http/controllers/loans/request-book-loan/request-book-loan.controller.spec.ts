@@ -1,12 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ConflictException, NotFoundException } from '@nestjs/common';
+import { getQueueToken } from '@nestjs/bullmq';
+
+import { faker } from '@faker-js/faker';
+import { Queue } from 'bullmq';
+
 import { RequestBookLoanController } from './request-book-loan.controller';
 import { BooksRepository } from '@/app/interfaces/repositories/books.repository';
 import { ReadersRepository } from '@/app/interfaces/repositories/reader.repository';
-import { Queue } from 'bullmq';
-import { getQueueToken } from '@nestjs/bullmq';
 import { RequestBookLoanService } from '@/app/services/loans/request-book-loan/request-book-loan.service';
-import { NotFoundException } from '@nestjs/common';
 import { Book } from '@/domain/entities/book';
+import { Reader } from '@/domain/entities/reader';
 
 describe('RequestBookLoanController', () => {
   let controller: RequestBookLoanController;
@@ -50,8 +54,8 @@ describe('RequestBookLoanController', () => {
   it('should response with 404 status code when book is not found', async () => {
     // Arrange
     const body = {
-      readerId: 1,
-      bookId: 1,
+      readerId: faker.number.int(),
+      bookId: faker.number.int(),
     };
 
     booksRepository.getById.mockResolvedValue(null);
@@ -66,13 +70,13 @@ describe('RequestBookLoanController', () => {
   it('should response with 404 status code when reader is not found', async () => {
     // Arrange
     const body = {
-      readerId: 1,
-      bookId: 1,
+      readerId: faker.number.int(),
+      bookId: faker.number.int(),
     };
 
     const book = new Book({
-      id: 1,
-      title: 'title',
+      id: faker.number.int(),
+      title: faker.lorem.words(),
     });
 
     booksRepository.getById.mockResolvedValue(book);
@@ -85,6 +89,33 @@ describe('RequestBookLoanController', () => {
     await expect(promise).rejects.toThrow(NotFoundException);
   });
 
-  it.todo('should response with 409 status code when book loan request already exists');
+  it('should response with 409 status code when book loan request already exists', async () => {
+    // Arrange
+    const body = {
+      readerId: faker.number.int(),
+      bookId: faker.number.int(),
+    };
+
+    const book = new Book({
+      id: faker.number.int(),
+      title: faker.lorem.words(),
+    });
+
+    const reader = new Reader({
+      id: faker.number.int(),
+      name: faker.person.fullName(),
+    });
+
+    booksRepository.getById.mockResolvedValue(book);
+    readersRepository.getById.mockResolvedValue(reader);
+    bookLoanQueueProducer.getJob.mockResolvedValue(<any>{});
+
+    // Act
+    const promise = controller.handle(body);
+
+    // Assert
+    await expect(promise).rejects.toThrow(ConflictException);
+  });
+
   it.todo('should response with 201 status code when request book loan is successful');
 });
