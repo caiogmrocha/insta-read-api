@@ -6,6 +6,7 @@ import { Queue } from 'bullmq';
 import { getQueueToken } from '@nestjs/bullmq';
 import { RequestBookLoanService } from '@/app/services/loans/request-book-loan/request-book-loan.service';
 import { NotFoundException } from '@nestjs/common';
+import { Book } from '@/domain/entities/book';
 
 describe('RequestBookLoanController', () => {
   let controller: RequestBookLoanController;
@@ -62,7 +63,28 @@ describe('RequestBookLoanController', () => {
     await expect(promise).rejects.toThrow(NotFoundException);
   });
 
-  it.todo('should response with 404 status code when reader is not found');
+  it('should response with 404 status code when reader is not found', async () => {
+    // Arrange
+    const body = {
+      readerId: 1,
+      bookId: 1,
+    };
+
+    const book = new Book({
+      id: 1,
+      title: 'title',
+    });
+
+    booksRepository.getById.mockResolvedValue(book);
+    readersRepository.getById.mockResolvedValue(null);
+
+    // Act
+    const promise = controller.handle(body);
+
+    // Assert
+    await expect(promise).rejects.toThrow(NotFoundException);
+  });
+
   it.todo('should response with 409 status code when book loan request already exists');
   it.todo('should response with 201 status code when request book loan is successful');
 });
