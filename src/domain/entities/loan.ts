@@ -8,7 +8,7 @@ export type LoanProps = Partial<{
   bookId: number;
   loanAt: Date;
   returnedAt: Date;
-  status: 'returned' | 'borrowed' | 'overdue' | 'available' | 'requested';
+  status: 'returned' | 'borrowed' | 'overdue' | 'requested';
 
   reader: Reader;
   book: Book;
@@ -20,7 +20,7 @@ export class Loan extends Entity<LoanProps> implements LoanProps {
   public bookId: number;
   public loanAt: Date;
   public returnedAt: Date;
-  public status: 'returned' | 'borrowed' | 'overdue' | 'available' | 'requested';
+  public status: LoanProps['status'];
 
   public reader: Reader;
   public book: Book;
