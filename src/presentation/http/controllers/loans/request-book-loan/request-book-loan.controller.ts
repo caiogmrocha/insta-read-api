@@ -3,6 +3,7 @@ import { Body, Controller, HttpCode, HttpStatus, InternalServerErrorException, N
 import { RequestBookLoanBodyDto } from './request-book-loan.dto';
 import { RequestBookLoanService } from '@/app/services/loans/request-book-loan/request-book-loan.service';
 import { BookNotFoundException } from '@/app/services/books/errors/book-not-found.exception';
+import { ReaderNotFoundException } from '@/app/services/readers/errors/reader-not-found.exception';
 
 @Controller()
 export class RequestBookLoanController {
@@ -17,7 +18,8 @@ export class RequestBookLoanController {
       await this.requestBookLoanService.execute(body);
     } catch (error) {
       switch (error.constructor) {
-        case BookNotFoundException: {
+        case BookNotFoundException:
+        case ReaderNotFoundException: {
           throw new NotFoundException();
         };
 
