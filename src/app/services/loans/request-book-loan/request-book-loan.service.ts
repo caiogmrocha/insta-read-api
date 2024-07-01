@@ -7,6 +7,7 @@ import { BooksRepository } from '@/app/interfaces/repositories/books.repository'
 import { ReadersRepository } from '@/app/interfaces/repositories/reader.repository';
 import { BookNotFoundException } from '../../books/errors/book-not-found.exception';
 import { ReaderNotFoundException } from '../../readers/errors/reader-not-found.exception';
+import { BookLoanRequestAlreadyExistsException } from '../errors/book-loan-request-already-exists.exception';
 
 export type RequestBookLoanParams = {
   readerId: number;
@@ -32,6 +33,12 @@ export class RequestBookLoanService {
 
     if (!reader) {
       throw new ReaderNotFoundException('id', params.readerId);
+    }
+
+    const bookLoanRequest = await this.bookLoanQueueProducer.getJob(`${reader.id}-${book.id}`);
+
+    if (bookLoanRequest) {
+      throw new BookLoanRequestAlreadyExistsException(reader.id, book.id);
     }
 
     await this.bookLoanQueueProducer.add('book-loan', {
