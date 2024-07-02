@@ -8,6 +8,7 @@ import { ReadersRepository } from '@/app/interfaces/repositories/reader.reposito
 import { BookNotFoundException } from '../../books/errors/book-not-found.exception';
 import { ReaderNotFoundException } from '../../readers/errors/reader-not-found.exception';
 import { ReaderAccountDeactivatedException } from '../../readers/errors/reader-account-deactivated.exception';
+import { WebSocketProvider } from '@/app/interfaces/websockets/websocket-server.provider';
 
 export type BookLoanParams = {
   readerId: number;
@@ -19,6 +20,7 @@ export class BookLoanProcessor extends WorkerHost {
   constructor (
     @Inject(BooksRepository) private readonly booksRepository: BooksRepository,
     @Inject(ReadersRepository) private readonly readersRepository: ReadersRepository,
+    @Inject(WebSocketProvider) private readonly webSocketProvider: WebSocketProvider,
   ) { super() }
 
   public async process(job: Job<BookLoanParams>): Promise<any> {
@@ -39,5 +41,13 @@ export class BookLoanProcessor extends WorkerHost {
     if (reader.isArchived) {
       throw new ReaderAccountDeactivatedException('id', reader.id);
     }
+
+    this.webSocketProvider.emit('notify', reader.id, {
+      type: 'book-loan',
+      data: {
+        bookId: book.id,
+        bookTitle: book.title,
+      },
+    });
   }
 }
