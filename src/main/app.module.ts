@@ -11,6 +11,7 @@ import { JwtProviderImpl } from '@/infra/auth/jwt/jwt.provider';
 import { AuthJwtGuard } from '@/infra/guards/auth-jwt.guard';
 import { AuthAdminGuard } from '@/infra/guards/auth-admin.guard';
 import { AuthReaderGuard } from '@/infra/guards/auth-reader.guard';
+import { WebSocketsModule } from './websockets.module';
 
 @Module({
   imports: [
@@ -22,12 +23,12 @@ import { AuthReaderGuard } from '@/infra/guards/auth-reader.guard';
         expiresIn: process.env.JWT_EXPIRATION_TIME,
       },
     }),
+    WebSocketsModule,
     AdminsModule,
     ReadersModule,
     BooksModule,
     LoansModule,
   ],
-  controllers: [],
   providers: [
     {
       provide: JwtProvider,
