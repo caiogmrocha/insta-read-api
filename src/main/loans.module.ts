@@ -13,6 +13,8 @@ import { PrismaReadersRepository } from '@/infra/repositories/prisma/prisma-read
 import { PrismaProvider } from '@/infra/repositories/prisma/prisma.provider';
 import { AuthJwtGuard } from '@/infra/guards/auth-jwt.guard';
 import { AuthReaderGuard } from '@/infra/guards/auth-reader.guard';
+import { BookLoanProcessor } from '@/app/services/loans/book-loan.processor/book-loan.processor';
+import { WebSocketsProvider } from '@/presentation/websockets/websockets.provider';
 
 @Module({
   imports: [
@@ -36,6 +38,10 @@ import { AuthReaderGuard } from '@/infra/guards/auth-reader.guard';
     AuthReaderGuard,
     PrismaProvider,
     {
+      provide: WebSocketsProvider,
+      useValue: WebSocketsProvider.getInstance(),
+    },
+    {
       provide: BooksRepository,
       useClass: PrismaBooksRepository,
     },
@@ -44,6 +50,7 @@ import { AuthReaderGuard } from '@/infra/guards/auth-reader.guard';
       useClass: PrismaReadersRepository,
     },
     RequestBookLoanService,
+    BookLoanProcessor,
   ],
   controllers: [
     RequestBookLoanController,
