@@ -9,6 +9,7 @@ import { BookNotFoundException } from '../../books/errors/book-not-found.excepti
 import { ReaderNotFoundException } from '../../readers/errors/reader-not-found.exception';
 import { BookLoanRequestAlreadyExistsException } from '../errors/book-loan-request-already-exists.exception';
 import { EXPECTED_LOAN_RETURN_DAYS } from '@/domain/entities/loan';
+import { LoansRepository } from '@/app/interfaces/repositories/loans.repository';
 
 export type RequestBookLoanParams = {
   readerId: number;
@@ -20,6 +21,7 @@ export class RequestBookLoanService {
   constructor (
     @Inject(BooksRepository) private readonly booksRepository: BooksRepository,
     @Inject(ReadersRepository) private readonly readersRepository: ReadersRepository,
+    @Inject(LoansRepository) private readonly loansRepository: LoansRepository,
     @InjectQueue('book-loan') private readonly bookLoanQueueProducer: Queue,
   ) {}
 
@@ -39,6 +41,12 @@ export class RequestBookLoanService {
     const bookLoanRequest = await this.bookLoanQueueProducer.getJob(`${reader.id}-${book.id}`);
 
     if (bookLoanRequest) {
+      throw new BookLoanRequestAlreadyExistsException(reader.id, book.id);
+    }
+
+    const loan = await this.loansRepository.getByReaderIdAndBookIdAndWithoutReturnAt(reader.id, book.id);
+
+    if (loan) {
       throw new BookLoanRequestAlreadyExistsException(reader.id, book.id);
     }
 

@@ -1,7 +1,9 @@
 import { Loan } from "@/domain/entities/loan";
 
 export interface LoansRepository {
-  create: (loan: Loan) => Promise<Loan>;
+  getByReaderIdAndBookIdAndWithoutReturnAt(readerId: number, bookId: number): Promise<Loan | null>;
+
+  create(loan: Loan): Promise<void>;
 }
 
 export const LoansRepository = Symbol('LoansRepository');
