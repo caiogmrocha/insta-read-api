@@ -17,7 +17,6 @@ export class PrismaLoansRepository implements LoansRepository {
         bookId: loan.bookId,
         loanAt: loan.loanAt,
         expectedReturnAt: loan.expectedReturnAt,
-        status: loan.status,
       },
     });
 
@@ -27,8 +26,7 @@ export class PrismaLoansRepository implements LoansRepository {
       bookId: createdLoan.bookId,
       loanAt: createdLoan.loanAt,
       expectedReturnAt: createdLoan.expectedReturnAt,
-      returnAt: createdLoan.returnAt,
-      status: createdLoan.status,
+      returnedAt: createdLoan.returnedAt,
       createdAt: createdLoan.createdAt,
       updatedAt: createdLoan.updatedAt,
       deletedAt: createdLoan.deletedAt,
