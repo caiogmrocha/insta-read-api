@@ -4,6 +4,7 @@ import { getQueueToken } from '@nestjs/bullmq';
 
 import { faker } from '@faker-js/faker';
 import { Queue } from 'bullmq';
+import { Request } from 'express';
 
 import { RequestBookLoanController } from './request-book-loan.controller';
 import { BooksRepository } from '@/app/interfaces/repositories/books.repository';
@@ -13,7 +14,6 @@ import { RequestBookLoanService } from '@/app/services/loans/request-book-loan/r
 import { Book } from '@/domain/entities/book';
 import { Reader } from '@/domain/entities/reader';
 import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
-import { Request } from 'express';
 import { Loan } from '@/domain/entities/loan';
 
 describe('RequestBookLoanController', () => {

@@ -10,27 +10,39 @@ export class PrismaLoansRepository implements LoansRepository {
     private readonly prisma: PrismaProvider,
   ) {}
 
-  public async create(loan: Loan): Promise<Loan> {
-    const createdLoan = await this.prisma.loan.create({
+  public async getByReaderIdAndBookIdAndWithoutReturnAt(readerId: number, bookId: number): Promise<Loan | null> {
+    const loanData = await this.prisma.loan.findFirst({
+      where: {
+        readerId,
+        bookId,
+        returnedAt: null,
+      },
+    });
+
+    const loan = new Loan({
+      id: loanData.id,
+      readerId: loanData.readerId,
+      bookId: loanData.bookId,
+      loanAt: loanData.loanAt,
+      expectedReturnAt: loanData.expectedReturnAt,
+      returnedAt: loanData.returnedAt,
+      createdAt: loanData.createdAt,
+      updatedAt: loanData.updatedAt,
+      deletedAt: loanData.deletedAt,
+      deleted: loanData.deleted,
+    });
+
+    return loan;
+  }
+
+  public async create(loan: Loan): Promise<void> {
+    await this.prisma.loan.create({
       data: {
         readerId: loan.readerId,
         bookId: loan.bookId,
         loanAt: loan.loanAt,
         expectedReturnAt: loan.expectedReturnAt,
       },
-    });
-
-    return new Loan({
-      id: createdLoan.id,
-      readerId: createdLoan.readerId,
-      bookId: createdLoan.bookId,
-      loanAt: createdLoan.loanAt,
-      expectedReturnAt: createdLoan.expectedReturnAt,
-      returnedAt: createdLoan.returnedAt,
-      createdAt: createdLoan.createdAt,
-      updatedAt: createdLoan.updatedAt,
-      deletedAt: createdLoan.deletedAt,
-      deleted: createdLoan.deleted,
     });
   };
 }
