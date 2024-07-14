@@ -10,6 +10,8 @@ import { BooksRepository } from '@/app/interfaces/repositories/books.repository'
 import { PrismaBooksRepository } from '@/infra/repositories/prisma/prisma-books.repository';
 import { ReadersRepository } from '@/app/interfaces/repositories/reader.repository';
 import { PrismaReadersRepository } from '@/infra/repositories/prisma/prisma-readers.repository';
+import { LoansRepository } from '@/app/interfaces/repositories/loans.repository';
+import { PrismaLoansRepository } from '@/infra/repositories/prisma/prisma-loans.repository';
 import { PrismaProvider } from '@/infra/repositories/prisma/prisma.provider';
 import { AuthJwtGuard } from '@/infra/guards/auth-jwt.guard';
 import { AuthReaderGuard } from '@/infra/guards/auth-reader.guard';
@@ -48,6 +50,10 @@ import { WebSocketsProvider } from '@/presentation/websockets/websockets.provide
     {
       provide: ReadersRepository,
       useClass: PrismaReadersRepository,
+    },
+    {
+      provide: LoansRepository,
+      useClass: PrismaLoansRepository,
     },
     RequestBookLoanService,
     BookLoanProcessor,
