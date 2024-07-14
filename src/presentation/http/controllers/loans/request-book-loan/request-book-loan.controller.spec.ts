@@ -8,17 +8,20 @@ import { Queue } from 'bullmq';
 import { RequestBookLoanController } from './request-book-loan.controller';
 import { BooksRepository } from '@/app/interfaces/repositories/books.repository';
 import { ReadersRepository } from '@/app/interfaces/repositories/reader.repository';
+import { LoansRepository } from '@/app/interfaces/repositories/loans.repository';
 import { RequestBookLoanService } from '@/app/services/loans/request-book-loan/request-book-loan.service';
 import { Book } from '@/domain/entities/book';
 import { Reader } from '@/domain/entities/reader';
 import { JwtProvider } from '@/app/interfaces/auth/jwt/jwt.provider';
 import { Request } from 'express';
+import { Loan } from '@/domain/entities/loan';
 
 describe('RequestBookLoanController', () => {
   let controller: RequestBookLoanController;
   let service: RequestBookLoanService;
   let booksRepository: jest.Mocked<BooksRepository>;
   let readersRepository: jest.Mocked<ReadersRepository>;
+  let loansRepository: jest.Mocked<LoansRepository>;
   let bookLoanQueueProducer: jest.Mocked<Queue>;
 
   beforeEach(async () => {
@@ -34,6 +37,12 @@ describe('RequestBookLoanController', () => {
           provide: ReadersRepository,
           useClass: jest.fn().mockImplementation(() => ({
             getById: jest.fn(),
+          })),
+        },
+        {
+          provide: LoansRepository,
+          useClass: jest.fn().mockImplementation(() => ({
+            getByReaderIdAndBookIdAndWithoutReturnAt: jest.fn(),
           })),
         },
         {
@@ -56,6 +65,7 @@ describe('RequestBookLoanController', () => {
     service = module.get<RequestBookLoanService>(RequestBookLoanService);
     booksRepository = module.get<jest.Mocked<BooksRepository>>(BooksRepository);
     readersRepository = module.get<jest.Mocked<ReadersRepository>>(ReadersRepository);
+    loansRepository = module.get<jest.Mocked<LoansRepository>>(LoansRepository);
     bookLoanQueueProducer = module.get<jest.Mocked<Queue>>(getQueueToken('book-loan'));
   });
 
@@ -109,7 +119,7 @@ describe('RequestBookLoanController', () => {
     await expect(promise).rejects.toThrow(NotFoundException);
   });
 
-  it('should response with 409 status code when book loan request already exists', async () => {
+  it('should response with 409 status code when book loan request already exists (Queue)', async () => {
     // Arrange
         const request = {
       user: {
@@ -135,6 +145,53 @@ describe('RequestBookLoanController', () => {
     booksRepository.getById.mockResolvedValue(book);
     readersRepository.getById.mockResolvedValue(reader);
     bookLoanQueueProducer.getJob.mockResolvedValue(<any>{});
+
+    // Act
+    const promise = controller.handle(request, body);
+
+    // Assert
+    await expect(promise).rejects.toThrow(ConflictException);
+  });
+
+  it('should response with 409 status code when book loan request already exists (Database)', async () => {
+    // Arrange
+        const request = {
+      user: {
+        id: faker.number.int(),
+      }
+    } as Request;
+
+    const body = {
+      readerId: faker.number.int(),
+      bookId: faker.number.int(),
+    };
+
+    const book = new Book({
+      id: faker.number.int(),
+      title: faker.lorem.words(),
+    });
+
+    const reader = new Reader({
+      id: faker.number.int(),
+      name: faker.person.fullName(),
+    });
+
+    const loan = new Loan({
+      id: faker.number.int(),
+      readerId: reader.id,
+      bookId: book.id,
+      loanAt: new Date(),
+      expectedReturnAt: new Date(),
+      returnedAt: null,
+      status: 'borrowed',
+      reader,
+      book,
+    });
+
+    bookLoanQueueProducer.getJob.mockResolvedValue(null);
+    booksRepository.getById.mockResolvedValue(book);
+    readersRepository.getById.mockResolvedValue(reader);
+    loansRepository.getByReaderIdAndBookIdAndWithoutReturnAt.mockResolvedValue(loan);
 
     // Act
     const promise = controller.handle(request, body);
