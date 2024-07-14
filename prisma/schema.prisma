@@ -19,6 +19,8 @@ model Reader {
   deletedAt  DateTime? @map("deleted_at")
   deleted    Boolean   @default(false)
 
+  loans Loan[]
+
   @@map("readers")
 }
 
@@ -36,20 +38,40 @@ model Admin {
 }
 
 model Book {
-  id        Int       @id @default(autoincrement())
-  isbn      String    @unique
-  title     String    @db.VarChar(255)
-  sinopsis  String    @db.Text
-  pages     Int       @db.UnsignedInt
-  amount    Int       @db.UnsignedInt @default(0)
-  author    String
-  category  String
-  publisher String
-  publicationDate DateTime @map("publication_date")
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-  deleted   Boolean   @default(false)
+  id              Int       @id @default(autoincrement())
+  isbn            String    @unique
+  title           String    @db.VarChar(255)
+  sinopsis        String    @db.Text
+  pages           Int       @db.UnsignedInt
+  amount          Int       @db.UnsignedInt @default(0)
+  author          String
+  category        String
+  publisher       String
+  publicationDate DateTime  @map("publication_date")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  deletedAt       DateTime? @map("deleted_at")
+  deleted         Boolean   @default(false)
+
+  loans Loan[]
 
   @@map("books")
+}
+
+model Loan {
+  id               Int       @id @default(autoincrement())
+  readerId         Int       @map("readers_id")
+  bookId           Int       @map("books_id")
+  loanAt         DateTime  @map("loan_date")
+  returnAt       DateTime? @map("return_date")
+  expectedReturnAt DateTime  @map("expected_return_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  deletedAt        DateTime? @map("deleted_at")
+  deleted          Boolean   @default(false)
+
+  reader Reader @relation(fields: [readerId], references: [id])
+  book   Book   @relation(fields: [bookId], references: [id])
+
+  @@map("loans")
 }
