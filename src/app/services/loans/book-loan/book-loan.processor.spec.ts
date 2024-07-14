@@ -6,18 +6,20 @@ import { Job } from 'bullmq';
 import { BookLoanParams, BookLoanProcessor } from './book-loan.processor';
 import { BooksRepository } from '@/app/interfaces/repositories/books.repository';
 import { ReadersRepository } from '@/app/interfaces/repositories/reader.repository';
-import { WebSocketProvider } from '@/app/interfaces/websockets/websocket-server.provider';
+import { WebSocketsProvider } from '@/presentation/websockets/websockets.provider';
 import { BookNotFoundException } from '../../books/errors/book-not-found.exception';
 import { ReaderNotFoundException } from '../../readers/errors/reader-not-found.exception';
 import { ReaderAccountDeactivatedException } from '../../readers/errors/reader-account-deactivated.exception';
 import { Reader } from '@/domain/entities/reader';
 import { Book } from '@/domain/entities/book';
+import { Socket } from '@/presentation/websockets/socket';
+
 
 describe('BookLoanProcessor', () => {
   let service: BookLoanProcessor;
   let booksRepository: jest.Mocked<BooksRepository>;
   let readersRepository: jest.Mocked<ReadersRepository>;
-  let webSocketProvider: jest.Mocked<WebSocketProvider>;
+  let webSocketProvider: jest.Mocked<WebSocketsProvider>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -35,10 +37,10 @@ describe('BookLoanProcessor', () => {
           })),
         },
         {
-          provide: WebSocketProvider,
-          useValue: {
-            emit: jest.fn(),
-          },
+          provide: WebSocketsProvider,
+          useClass: jest.fn().mockImplementation(() => ({
+            get: jest.fn()
+          })),
         },
         BookLoanProcessor,
       ],
@@ -47,7 +49,7 @@ describe('BookLoanProcessor', () => {
     service = module.get<BookLoanProcessor>(BookLoanProcessor);
     booksRepository = module.get<jest.Mocked<BooksRepository>>(BooksRepository);
     readersRepository = module.get<jest.Mocked<ReadersRepository>>(ReadersRepository);
-    webSocketProvider = module.get<jest.Mocked<WebSocketProvider>>(WebSocketProvider);
+    webSocketProvider = module.get<jest.Mocked<WebSocketsProvider>>(WebSocketsProvider);
   });
 
   it('should throw BookNotFoundException when book is not found', async () => {
@@ -139,16 +141,22 @@ describe('BookLoanProcessor', () => {
 
     readersRepository.getById.mockResolvedValue(reader);
 
+    const socketMock = {
+      send: jest.fn(),
+    } as unknown as jest.Mocked<Socket>;
+
+    webSocketProvider.get.mockReturnValue(socketMock);
+
     // Act
     const promise = service.process(params);
 
     // Assert
     await expect(promise).resolves.not.toThrow();
-    expect(webSocketProvider.emit).toHaveBeenCalledWith('notify', reader.id, {
+    expect(socketMock.send).toHaveBeenCalledWith({
       type: 'book-loan',
-      data: {
-        bookId: book.id,
-        bookTitle: book.title,
+      payload: {
+        book,
+        reader,
       },
     });
   });

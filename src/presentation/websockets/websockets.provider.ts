@@ -1,14 +1,14 @@
 import { Injectable, Scope } from "@nestjs/common";
-import { WebSocket } from "ws";
+import { Socket } from "./socket";
 
 @Injectable({ durable: true, scope: Scope.DEFAULT })
 export class WebSocketsProvider {
   private static instance: WebSocketsProvider;
 
-  private sockets: Map<number, WebSocket>;
+  private sockets: Map<number, Socket>;
 
   constructor () {
-    this.sockets = new Map<number, WebSocket>();
+    this.sockets = new Map<number, Socket>();
   }
 
   public static getInstance() {
@@ -19,7 +19,7 @@ export class WebSocketsProvider {
     return WebSocketsProvider.instance;
   }
 
-  public set(id: number, socket: WebSocket) {
+  public set(id: number, socket: Socket) {
     this.sockets.set(id, socket);
   }
 

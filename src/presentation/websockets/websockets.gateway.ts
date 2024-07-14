@@ -2,19 +2,19 @@ import { IncomingMessage } from "node:http";
 
 import { Inject, Logger } from "@nestjs/common";
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
-import { InjectRedis } from "@nestjs-modules/ioredis";
 
 import { WebSocket, WebSocketServer as WSS } from 'ws';
-import { Redis } from 'ioredis';
-
 import { JwtProvider } from "@/app/interfaces/auth/jwt/jwt.provider";
 import { Admin } from "@/domain/entities/admin";
 import { Reader } from "@/domain/entities/reader";
 import { User } from "@/domain/entities/user";
 import { WebSocketsProvider } from "./websockets.provider";
+import { Socket } from "./socket";
 
 @WebSocketGateway()
 export class WebSocketGatewayProvider implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+  private readonly logger = new Logger(WebSocketGatewayProvider.name);
+
   constructor (
     @Inject(JwtProvider) private readonly jwtProvider: JwtProvider,
     private readonly socketsMap: WebSocketsProvider,
@@ -50,7 +50,9 @@ export class WebSocketGatewayProvider implements OnGatewayInit, OnGatewayConnect
       payload = new Admin(payload);
     }
 
-    this.socketsMap.set(payload.id, client);
+    const socketWrapper = new Socket(client);
+
+    this.socketsMap.set(payload.id, socketWrapper);
 
     client.send(JSON.stringify({
       type: 'user-connected',
@@ -65,10 +67,10 @@ export class WebSocketGatewayProvider implements OnGatewayInit, OnGatewayConnect
       this.socketsMap.delete(payload.id);
     });
 
-    Logger.log('Authenticated');
+    this.logger.log('Authenticated');
   }
 
   handleDisconnect(client: WebSocket) {
-    Logger.log('Disconnected');
+    this.logger.log('Disconnected');
   }
 }

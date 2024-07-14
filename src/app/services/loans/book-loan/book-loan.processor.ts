@@ -19,6 +19,8 @@ export type BookLoanParams = {
 
 @Processor('book-loan')
 export class BookLoanProcessor extends WorkerHost {
+  private readonly logger = new Logger(BookLoanProcessor.name);
+
   constructor (
     @Inject(BooksRepository) private readonly booksRepository: BooksRepository,
     @Inject(ReadersRepository) private readonly readersRepository: ReadersRepository,
@@ -44,19 +46,17 @@ export class BookLoanProcessor extends WorkerHost {
       throw new ReaderAccountDeactivatedException('id', reader.id);
     }
 
-    Logger.log(`Processing loan for book ${book.title} to reader ${reader.name}`);
+    this.logger.log(`Processing loan for book ${book.title} to reader ${reader.name}`);
 
     const userSocket = this.webSocketProvider.get(reader.id);
 
     if (userSocket) {
-      await new Promise((resolve, reject) => {
-        userSocket.send(JSON.stringify({
-          type: 'book-loan',
-          payload: {
-            book,
-            reader,
-          },
-        }), error => error ? reject(error) : resolve(null));
+      await userSocket.send({
+        type: 'book-loan',
+        payload: {
+          book,
+          reader,
+        },
       });
     }
   }

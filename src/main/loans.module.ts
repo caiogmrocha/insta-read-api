@@ -13,7 +13,7 @@ import { PrismaReadersRepository } from '@/infra/repositories/prisma/prisma-read
 import { PrismaProvider } from '@/infra/repositories/prisma/prisma.provider';
 import { AuthJwtGuard } from '@/infra/guards/auth-jwt.guard';
 import { AuthReaderGuard } from '@/infra/guards/auth-reader.guard';
-import { BookLoanProcessor } from '@/app/services/loans/book-loan.processor/book-loan.processor';
+import { BookLoanProcessor } from '@/app/services/loans/book-loan/book-loan.processor';
 import { WebSocketsProvider } from '@/presentation/websockets/websockets.provider';
 
 @Module({
